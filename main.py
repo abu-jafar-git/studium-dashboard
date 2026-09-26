@@ -26,7 +26,8 @@ def main():
         # 4. Hauptfenster (root) für die GUI erstellen.
         root = tk.Tk()
 
-        # 5. Die Haupt-GUI-Klasse initialisieren und Controller übergeben.
+        # 5. Die Haupt-GUI-Klasse initialisieren und Controller übergeben. Man kann da theoretisch direkt Studiendashboard aufrufen
+        # ohne es in app zu speichern, aber ich lass es falls man es zum debuggen braucht.
         app = StudienDashboard(root, controller)
 
         # 6. Die GUI-Event-Schleife starten.

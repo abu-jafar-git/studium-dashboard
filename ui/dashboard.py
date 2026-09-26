@@ -40,14 +40,30 @@ class ScrollableFrame(tk.Frame):
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
 
-        # Mausrad-Support
-        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+        # Mausrad nur aktiv, solange die Maus über diesem Bereich ist
+        self.bind("<Enter>", self._mausrad_aktivieren)
+        self.bind("<Leave>", self._mausrad_deaktivieren)
 
         # Breite anpassen
         self.canvas.bind("<Configure>", self._on_canvas_configure)
 
     def _on_canvas_configure(self, event):
         self.canvas.itemconfig(self.window_id, width=event.width)
+
+    def _mausrad_aktivieren(self, event=None):
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+
+    def _mausrad_deaktivieren(self, event):
+        # Maus nur dann "raus", wenn sie auch kein Kind-Widget in diesem Bereich berührt
+        try:
+            widget = self.winfo_containing(event.x_root, event.y_root)
+        except KeyError:
+            widget = None
+        while widget is not None:
+            if widget is self:
+                return
+            widget = widget.master
+        self.canvas.unbind_all("<MouseWheel>")
 
     def _on_mousewheel(self, event):
         # Nur scrollen, wenn das Canvas sichtbar ist
@@ -85,7 +101,7 @@ class StudienDashboard:
         self._initialisiere_styles()
         self.lade_und_zeichne_dashboard()
 
-    # --- Öffentliche Methoden für den Controller ---
+    #Öffentliche Methoden für den Controller
 
     def zeige_erfolgsmeldung(self, nachricht: str):
         """Zeigt eine standardisierte Erfolgsmeldung an."""
@@ -95,7 +111,7 @@ class StudienDashboard:
         """Zeigt eine standardisierte Fehlermeldung an."""
         messagebox.showerror("Fehler", nachricht)
 
-    # --- Rendering-Methoden ---
+    # Rendering-Methoden
 
     def _initialisiere_styles(self):
         """
