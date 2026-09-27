@@ -508,6 +508,23 @@ class DBManager:
             code=row['code'], ects=row['ects'], status=row['status']
         )
 
+    @staticmethod
+    def _parse_datum(datum_str) -> Optional[date]:
+        """
+        Parst ein Datum aus ISO-Format ('%Y-%m-%d') oder deutschem Format ('%d.%m.%Y').
+        """
+        if not datum_str:
+            return None
+        try:
+            return datetime.strptime(datum_str, '%Y-%m-%d').date()
+        except ValueError:
+            try:
+                return datetime.strptime(datum_str, '%d.%m.%Y').date()
+            except ValueError:
+                print(f"[INFO] Warnung: Unbekanntes Datumsformat: {datum_str}")
+                return None
+
+    # Hilfsmethode für bearbeite_modul_pruefungsleistung. Übersichtlichkeitshalber wurden die hier verlegt.
     def _speichere_modul(self, daten: Dict[str, Any], modul_id: Optional[int] = None, commit: bool = True) -> Tuple[bool, str]:
         """
         Speichert die Kerndaten eines Moduls (nur SQL, keine Validierung).
@@ -543,22 +560,6 @@ class DBManager:
             if commit:
                 conn.rollback()
             return False, f"Datenbankfehler: {e}"
-
-    @staticmethod
-    def _parse_datum(datum_str) -> Optional[date]:
-        """
-        Parst ein Datum aus ISO-Format ('%Y-%m-%d') oder deutschem Format ('%d.%m.%Y').
-        """
-        if not datum_str:
-            return None
-        try:
-            return datetime.strptime(datum_str, '%Y-%m-%d').date()
-        except ValueError:
-            try:
-                return datetime.strptime(datum_str, '%d.%m.%Y').date()
-            except ValueError:
-                print(f"[INFO] Warnung: Unbekanntes Datumsformat: {datum_str}")
-                return None
 
     def _speichere_pruefungsleistung(self, daten: Dict[str, Any], modul_id: int, commit: bool = True) -> Tuple[bool, str]:
         """
