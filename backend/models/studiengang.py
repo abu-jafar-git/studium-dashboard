@@ -62,7 +62,7 @@ class Studiengang:
         Wirft einen ValueError, wenn die Bedingungen nicht erfüllt sind.
         """
         if not self.semester_liste:
-            raise ValueError("Keine Semester vorhanden, die gelöscht werden könnten.")
+            raise ValueError("Keine Semester vorhanden, das gelöscht werden könnten.")
 
         letztes_semester = self.semester_liste[-1]
 
