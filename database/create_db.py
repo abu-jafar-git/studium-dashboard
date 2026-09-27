@@ -2,8 +2,6 @@ import sqlite3
 import os
 import shutil
 from datetime import datetime
-
-# Importiert die "Musiker"-Funktionen aus den Seeder-Dateien.
 from backend.repository.db_seeder_leere import fuelle_datenbank as fuelle_leere_db
 from backend.repository.db_seeder_test_daten import fuelle_datenbank as fuelle_test_db
 
@@ -101,10 +99,8 @@ def initialisiere_datenbank(db_pfad: str, modus: str, backup_ordner: str = "data
             shutil.copy2(db_pfad, backup_pfad)
         except Exception as e:
             print(f"[FEHLER] Fehler beim Erstellen des Backups: {e}")
-            # Hier brechen wir nicht ab, da das Backup optional ist.
 
     # 2. Alte Datenbank löschen, um einen sauberen Start zu gewährleisten.
-    if os.path.exists(db_pfad):
         try:
             os.remove(db_pfad)
         except Exception as e:
@@ -124,14 +120,12 @@ def initialisiere_datenbank(db_pfad: str, modus: str, backup_ordner: str = "data
 
         # 5. Datenbank je nach Modus mit Daten befüllen.
         if modus == "test":
-            # Ruft den "Musiker" für die Test-Daten auf.
             fuelle_test_db(conn)
         else:
-            # Ruft den "Musiker" für die leere Datenbank auf.
             fuelle_leere_db(conn)
 
     except sqlite3.Error as e:
-        raise e  # Auch DB-Fehler weiterwerfen
+        raise e
     finally:
         # 6. Verbindung sauber schließen.
         if 'conn' in locals() and conn:
