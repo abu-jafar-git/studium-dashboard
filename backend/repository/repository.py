@@ -59,10 +59,6 @@ class CsvExporter:
         Exportiert alle relevanten Moduldaten in eine CSV-Datei.
         """
         conn = self.db_connection.get_connection()
-        if not conn:
-            self.db_connection.verbinden()
-            conn = self.db_connection.get_connection()
-
         cursor = conn.cursor()
         query = """
             SELECT m.id, s.nummer as semester, m.name, m.code, m.ects, m.status,
@@ -111,11 +107,8 @@ class DBManager:
         Diese Methode gibt IMMER ein Studiengang-Objekt zurück.
         """
         conn = self.db_connection.get_connection()
-        if not conn:
-            print("[INFO] Verbindung zur Datenbank nicht hergestellt. Gebe leeres Objekt zurück.")
-            return Studiengang()
-
         cursor = conn.cursor()
+
         cursor.execute("SELECT * FROM studiengang WHERE id = 1")
         stg_row = cursor.fetchone()
 
@@ -190,9 +183,6 @@ class DBManager:
         frisch aus der Datenbank.
         """
         conn = self.db_connection.get_connection()
-        if not conn:
-            self.db_connection.verbinden()
-            conn = self.db_connection.get_connection()
         cursor = conn.cursor()
 
         sql = """
@@ -229,8 +219,6 @@ class DBManager:
         direkt aus der DB.
         """
         conn = self.db_connection.get_connection()
-        if not conn:
-            return None
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM semester WHERE id = ?", (semester_id,))
@@ -277,9 +265,6 @@ class DBManager:
         Liefert alle Pflichtmodule (nicht Wahlpflicht), sortiert nach Semester und ID.
         """
         conn = self.db_connection.get_connection()
-        if not conn:
-            self.db_connection.verbinden()
-            conn = self.db_connection.get_connection()
         cursor = conn.cursor()
         query = """
             SELECT m.id, m.name, m.code, m.ects, m.status, m.semester_id, s.nummer as semester_nummer
@@ -298,9 +283,6 @@ class DBManager:
         Liefert alle Wahlpflichtmodule, sortiert nach Bereich, Semester und ID.
         """
         conn = self.db_connection.get_connection()
-        if not conn:
-            self.db_connection.verbinden()
-            conn = self.db_connection.get_connection()
         cursor = conn.cursor()
         query = """
             SELECT m.id, m.name, m.code, m.ects, m.status, m.semester_id, w.bereich, s.nummer as semester_nummer
@@ -319,9 +301,6 @@ class DBManager:
         Liefert eine Liste aller bereits verwendeten Wahlpflichtbereiche (z.B. ['A', 'B', 'C']).
         """
         conn = self.db_connection.get_connection()
-        if not conn:
-            self.db_connection.verbinden()
-            conn = self.db_connection.get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT DISTINCT bereich FROM wahlpflicht_modul WHERE bereich IS NOT NULL ORDER BY bereich")
         return [row[0] for row in cursor.fetchall()]
@@ -334,8 +313,6 @@ class DBManager:
         Diese Methode macht NUR SQL - keine Berechnungen!
         """
         conn = self.db_connection.get_connection()
-        if not conn:
-            return
 
         try:
             stg_sql = """
@@ -466,8 +443,6 @@ class DBManager:
         Weist einem Modul ein Semester zu (nur SQL, keine Validierung).
         """
         conn = self.db_connection.get_connection()
-        if not conn:
-            return False
         try:
             cursor = conn.cursor()
             cursor.execute("UPDATE modul SET semester_id = ? WHERE id = ?", (semester_id, modul_id))
@@ -481,8 +456,7 @@ class DBManager:
         Entkoppelt ein Modul von seinem Semester (nur SQL, keine Validierung).
         """
         conn = self.db_connection.get_connection()
-        if not conn:
-            return False
+
         try:
             cursor = conn.cursor()
             cursor.execute("UPDATE modul SET semester_id = NULL WHERE id = ?", (modul_id,))
