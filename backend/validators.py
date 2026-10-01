@@ -86,10 +86,6 @@ class ModulValidator:
         except (ValueError, TypeError):
             fehler.append("- ECTS muss eine ganze Zahl sein.")
 
-        # Status
-        status = daten.get('status')
-        if status not in ALLE_MODUL_STATUS:
-            fehler.append(f"- Ungültiger Modul-Status. Erlaubt sind: {', '.join(ALLE_MODUL_STATUS)}")
 
         # Wahlpflichtbereich
         if 'bereich' in daten and not daten.get('bereich'):
