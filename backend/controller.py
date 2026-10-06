@@ -45,9 +45,6 @@ class DashboardController:
     def setze_aktives_semester(self, semester_id: int) -> None:
         """Setzt ein Semester als aktiv und steuert die View."""
         semester = self.lade_semester(semester_id)
-        if not semester:
-            self.view.zeige_fehlermeldung("Semester nicht gefunden.")
-            return
         erfolg, nachricht = self.repository.setze_aktives_semester(semester_id)
         if erfolg:
             self._aktualisiere_kpis()
