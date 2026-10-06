@@ -47,7 +47,6 @@ class DashboardController:
         semester = self.lade_semester(semester_id)
         erfolg, nachricht = self.repository.setze_aktives_semester(semester_id)
         if erfolg:
-            self._aktualisiere_kpis()
             self.view.zeige_erfolgsmeldung(f"Semester {semester.nummer} ist jetzt aktiv.")
             self.view.zeige_semester_detail(semester_id)
         else:
@@ -74,10 +73,7 @@ class DashboardController:
                 self.view.zeige_fehlermeldung("Fehler beim Speichern des Semesters.")
                 return
 
-            # 4. Folgeprozesse anstoßen
-            self._aktualisiere_kpis()
-
-            # 5. View über Erfolg informieren und zum Neuzeichnen anweisen
+            # 4. View über Erfolg informieren und zum Neuzeichnen anweisen
             self.view.lade_und_zeichne_dashboard()
             self.view.zeige_erfolgsmeldung(f"Semester {neues_semester.nummer} erfolgreich erstellt.")
 
@@ -96,7 +92,6 @@ class DashboardController:
                 self.view.zeige_fehlermeldung("Fehler beim Löschen des Semesters aus der Datenbank.")
                 return
 
-            self._aktualisiere_kpis()
             self.view.lade_und_zeichne_dashboard()
             self.view.zeige_erfolgsmeldung(f"Semester {semester_zum_loeschen.nummer} erfolgreich gelöscht.")
 
