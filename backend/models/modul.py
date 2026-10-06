@@ -57,14 +57,6 @@ class Modul:
         if self.status in [STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN]:
             raise ValueError("Bestandene oder nicht bestandene Module können nicht gelöscht werden.")
 
-    def pruefe_ob_aus_semester_entfernbar(self):
-        """
-        Geschäftsregel: Prüft, ob das Modul aus einem Semester entfernt werden darf.
-        Löst einen ValueError aus, wenn die Regel verletzt wird.
-        """
-        if not self.semester_id:
-            raise ValueError("Modul ist keinem Semester zugeordnet und kann daher nicht entfernt werden.")
-
     def ist_frei(self) -> bool:
         """
         Gibt an, ob das Modul noch keinem Semester zugeordnet ist.

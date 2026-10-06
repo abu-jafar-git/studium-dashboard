@@ -148,8 +148,6 @@ class DashboardController:
                 self.view.zeige_fehlermeldung("Modul nicht gefunden.")
                 return
 
-            modul.pruefe_ob_aus_semester_entfernbar()
-
             erfolg = self.repository.entferne_modul_aus_semester(modul_id)
             if not erfolg:
                 self.view.zeige_fehlermeldung("Fehler beim Entfernen des Moduls.")
