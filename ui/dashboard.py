@@ -466,7 +466,7 @@ class StudienDashboard:
         # ECTS (aus DB)
         ects = semester.aktuelle_ects_semester
         wert_ects = str(ects) if ects else "0"
-        gesamt_ects = semester.berechne_gesamt_ects()
+        gesamt_ects = semester.gesamt_ects_semester
         self._zeichne_eine_kpi_karte(kpi_frame, 1, "ECTS SEMESTER", wert_ects, f"/ {gesamt_ects} ECTS", FARBE_BLAU)
 
     def zeige_pflichtmodule_verwaltung(self):

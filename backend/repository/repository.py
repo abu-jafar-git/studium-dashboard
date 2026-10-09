@@ -140,7 +140,8 @@ class DBManager:
                 nummer=sem_row['nummer'],
                 ist_aktiv=(sem_row['status'] == 'Aktiv'),
                 notenschnitt_semester=sem_row['notenschnitt_semester'],
-                aktuelle_ects_semester=sem_row['aktuelle_ects_semester']
+                aktuelle_ects_semester=sem_row['aktuelle_ects_semester'],
+                gesamt_ects_semester=sem_row['gesamt_ects_semester']
             )
             studiengang_obj.verknuepfe_semester(semester_obj)
             semester_map[semester_obj.id] = semester_obj
@@ -232,7 +233,8 @@ class DBManager:
             nummer=sem_row['nummer'],
             ist_aktiv=(sem_row['status'] == 'Aktiv'),
             notenschnitt_semester=sem_row['notenschnitt_semester'],
-            aktuelle_ects_semester=sem_row['aktuelle_ects_semester']
+            aktuelle_ects_semester=sem_row['aktuelle_ects_semester'],
+            gesamt_ects_semester=sem_row['gesamt_ects_semester']
         )
 
         sql = """
@@ -329,12 +331,13 @@ class DBManager:
                 studiengang.abgeschlossene_module
             ))
 
-            sem_sql = "UPDATE semester SET notenschnitt_semester = ?, aktuelle_ects_semester = ? WHERE id = ?"
+            sem_sql = "UPDATE semester SET notenschnitt_semester = ?, aktuelle_ects_semester = ?, gesamt_ects_semester = ? WHERE id = ?"
             semester_updates = []
             for semester in studiengang.semester_liste:
                 semester_updates.append((
                     semester.notenschnitt_semester,
                     semester.aktuelle_ects_semester,
+                    semester.gesamt_ects_semester,
                     semester.id
                 ))
 

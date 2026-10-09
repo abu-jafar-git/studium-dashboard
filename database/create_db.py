@@ -39,6 +39,7 @@ def erstelle_schema(cursor: sqlite3.Cursor):
           `status` TEXT DEFAULT 'Nicht aktiv',
           `notenschnitt_semester` REAL DEFAULT NULL,
           `aktuelle_ects_semester` INTEGER DEFAULT 0,
+          `gesamt_ects_semester` INTEGER DEFAULT 0,
           FOREIGN KEY (`studiengang_id`) REFERENCES `studiengang` (`id`) ON DELETE CASCADE
         );
 

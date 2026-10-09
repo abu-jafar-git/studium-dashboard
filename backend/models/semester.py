@@ -12,7 +12,7 @@ class Semester:
 
     def __init__(self, nummer: int, id: Optional[int] = None, studiengang_id: Optional[int] = None,
                  ist_aktiv: bool = False, notenschnitt_semester: Optional[float] = None,
-                 aktuelle_ects_semester: Optional[int] = 0):
+                 aktuelle_ects_semester: Optional[int] = 0, gesamt_ects_semester: Optional[int] = 0):
         """
         Initialisiert ein neues Semester-Objekt.
 
@@ -22,6 +22,7 @@ class Semester:
         :param ist_aktiv: Gibt an, ob dies das aktuell aktive Semester ist.
         :param notenschnitt_semester: Der berechnete Notenschnitt nur für dieses Semester.
         :param aktuelle_ects_semester: Die berechnete Summe der ECTS nur für dieses Semester.
+        :param gesamt_ects_semester: Die Summe der ECTS aller Module dieses Semesters (unabhängig vom Status).
         """
         self.id = id
         self.studiengang_id = studiengang_id
@@ -31,6 +32,7 @@ class Semester:
         # Berechnete Werte
         self.notenschnitt_semester = notenschnitt_semester
         self.aktuelle_ects_semester = aktuelle_ects_semester
+        self.gesamt_ects_semester = gesamt_ects_semester
 
         # Aggregations-Beziehung: Liste der zugehörigen Modul-Objekte
         self.module: List[Modul] = []
@@ -41,6 +43,7 @@ class Semester:
         """
         self.notenschnitt_semester = self.berechne_semester_schnitt()
         self.aktuelle_ects_semester = self.berechne_semester_ects()
+        self.gesamt_ects_semester = self.berechne_gesamt_ects()
 
     def berechne_semester_schnitt(self) -> float:
         """
