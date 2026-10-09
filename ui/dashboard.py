@@ -5,7 +5,8 @@ from backend.models.constants import (
     HINTERGRUND_FARBE, KARTE_HINTERGRUND, TEXT_DUNKEL, TEXT_HELL, RAHMEN_FARBE,
     FARBE_BESTANDEN, FARBE_AKTIV, FARBE_BLAU, FARBE_VIOLETT, FARBE_INDIGO,
     SCHRIFT_TITEL, SCHRIFT_H2, SCHRIFT_KPI_WERT, SCHRIFT_KPI_LABEL, SCHRIFT_NORMAL, SCHRIFT_KLEIN,
-    STATUS_FARBEN, STATUS_GEPLANT, STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN,    ALLE_MODUL_STATUS, MOEGLICHE_PRUEFUNGSARTEN, MOEGLICHE_VERSUCHE, WP_BEREICHE,
+    STATUS_FARBEN, STATUS_GEPLANT,
+    ALLE_MODUL_STATUS, MOEGLICHE_PRUEFUNGSARTEN, MOEGLICHE_VERSUCHE, WP_BEREICHE,
     STATUS_MIT_PRUEFUNGSLEISTUNG
 )
 from backend.models.modul import Modul, WahlpflichtModul
@@ -736,7 +737,7 @@ class StudienDashboard:
             bereich_combo.pack(fill="x", pady=(2, 12))
 
         tk.Label(container, text="Status:", font=("Helvetica", 8, "bold"), bg="white", fg=TEXT_HELL).pack(anchor="w")
-        status_var = tk.StringVar(value=modul.status if modul else "Geplant")
+        status_var = tk.StringVar(value=modul.status if modul else STATUS_GEPLANT)
         status_combo = ttk.Combobox(container, textvariable=status_var, values=ALLE_MODUL_STATUS, state="readonly")
         status_combo.pack(fill="x", pady=(2, 12))
 
@@ -762,8 +763,8 @@ class StudienDashboard:
             status = status_var.get()
 
             # Warn-Logik
-            ursprung_status = modul.status if modul else "Geplant"
-            if ursprung_status in [STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN] and status not in [STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN]:
+            ursprung_status = modul.status if modul else STATUS_GEPLANT
+            if ursprung_status in STATUS_MIT_PRUEFUNGSLEISTUNG and status not in STATUS_MIT_PRUEFUNGSLEISTUNG:
                 warn_label.pack(pady=(5, 0))
             else:
                 warn_label.pack_forget()

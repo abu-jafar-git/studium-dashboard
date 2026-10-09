@@ -1,7 +1,7 @@
 from datetime import date
 from typing import List, Optional
 from backend.models.semester import Semester
-from backend.models.constants import STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN
+from backend.models.constants import STATUS_MIT_PRUEFUNGSLEISTUNG
 
 
 class Studiengang:
@@ -98,7 +98,7 @@ class Studiengang:
         anzahl_noten = 0
         for semester in self.semester_liste:
             for modul in semester.module:
-                if modul.status in [STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN]:
+                if modul.status in STATUS_MIT_PRUEFUNGSLEISTUNG:
                     leistung = modul.hole_leistung()
                     if leistung and leistung.note is not None:
                         summe_aller_noten += leistung.note

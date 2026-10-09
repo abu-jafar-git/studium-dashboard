@@ -1,6 +1,6 @@
 from typing import List, Optional
 from backend.models.modul import Modul
-from backend.models.constants import STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN
+from backend.models.constants import STATUS_BESTANDEN, STATUS_MIT_PRUEFUNGSLEISTUNG
 
 
 class Semester:
@@ -55,7 +55,7 @@ class Semester:
 
         for modul in self.module:
             # 1. Status prüfen
-            if modul.status in [STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN]:
+            if modul.status in STATUS_MIT_PRUEFUNGSLEISTUNG:
                 # 2. Note holen (aus dem verknüpften Objekt)
                 note = modul.hole_note()
 

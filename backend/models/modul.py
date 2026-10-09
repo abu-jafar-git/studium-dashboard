@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import date
 from backend.models.pruefungsleistung import Pruefungsleistung
-from backend.models.constants import STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN, STATUS_MIT_PRUEFUNGSLEISTUNG
+from backend.models.constants import STATUS_BESTANDEN, STATUS_MIT_PRUEFUNGSLEISTUNG
 
 
 class Modul:
@@ -54,7 +54,7 @@ class Modul:
         Geschäftsregel: Prüft, ob das Modul gelöscht werden darf.
         Löst einen ValueError aus, wenn die Regel verletzt wird.
         """
-        if self.status in [STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN]:
+        if self.status in STATUS_MIT_PRUEFUNGSLEISTUNG:
             raise ValueError("Bestandene oder nicht bestandene Module können nicht gelöscht werden.")
 
     def ist_frei(self) -> bool:
