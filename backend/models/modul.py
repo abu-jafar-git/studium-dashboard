@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import date
 from backend.models.pruefungsleistung import Pruefungsleistung
-from backend.models.constants import STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN
+from backend.models.constants import STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN, STATUS_MIT_PRUEFUNGSLEISTUNG
 
 
 class Modul:
@@ -69,7 +69,7 @@ class Modul:
         gelöscht werden soll. Das ist der Fall, wenn der Status weder 'Bestanden'
         noch 'Nicht bestanden' ist.
         """
-        return self.status not in [STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN]
+        return self.status not in STATUS_MIT_PRUEFUNGSLEISTUNG
 
     #Getter-Methoden für gekapselte Daten der Prüfungsleistung
 

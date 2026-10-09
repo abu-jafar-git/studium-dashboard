@@ -5,8 +5,8 @@ from backend.models.constants import (
     HINTERGRUND_FARBE, KARTE_HINTERGRUND, TEXT_DUNKEL, TEXT_HELL, RAHMEN_FARBE,
     FARBE_BESTANDEN, FARBE_AKTIV, FARBE_BLAU, FARBE_VIOLETT, FARBE_INDIGO,
     SCHRIFT_TITEL, SCHRIFT_H2, SCHRIFT_KPI_WERT, SCHRIFT_KPI_LABEL, SCHRIFT_NORMAL, SCHRIFT_KLEIN,
-    STATUS_FARBEN, STATUS_GEPLANT, STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN,
-    ALLE_MODUL_STATUS, MOEGLICHE_PRUEFUNGSARTEN, MOEGLICHE_VERSUCHE, WP_BEREICHE
+    STATUS_FARBEN, STATUS_GEPLANT, STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN,    ALLE_MODUL_STATUS, MOEGLICHE_PRUEFUNGSARTEN, MOEGLICHE_VERSUCHE, WP_BEREICHE,
+    STATUS_MIT_PRUEFUNGSLEISTUNG
 )
 from backend.models.modul import Modul, WahlpflichtModul
 
@@ -768,7 +768,7 @@ class StudienDashboard:
             else:
                 warn_label.pack_forget()
 
-            if status in [STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN]:
+            if status in STATUS_MIT_PRUEFUNGSLEISTUNG:
                 tk.Label(pruefung_frame, text="Prüfungsleistung", font=("Helvetica", 10, "bold"), bg="white",
                          fg=TEXT_DUNKEL).pack(anchor="w", pady=(10, 5))
 
@@ -844,7 +844,7 @@ class StudienDashboard:
                 basis_daten['bereich'] = bereich_var.get()
 
             pruef_daten = None
-            if status_var.get() in [STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN]:
+            if status_var.get() in STATUS_MIT_PRUEFUNGSLEISTUNG:
                 pruef_daten = {
                     'pruefungsart': widgets_pruefung['pruefungsart'].get(),
                     'note': widgets_pruefung['note'].get(),
