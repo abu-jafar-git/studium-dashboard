@@ -106,9 +106,6 @@ class DashboardController:
         """
         try:
             modul = self.repository.lade_modul(modul_id)
-            if not modul:
-                self.view.zeige_fehlermeldung("Modul nicht gefunden.")
-                return
 
             modul.pruefe_ob_loeschbar()
 
@@ -136,9 +133,6 @@ class DashboardController:
         """
         try:
             modul = self.repository.lade_modul(modul_id)
-            if not modul:
-                self.view.zeige_fehlermeldung("Modul nicht gefunden.")
-                return
 
             erfolg = self.repository.entferne_modul_aus_semester(modul_id)
             if not erfolg:
