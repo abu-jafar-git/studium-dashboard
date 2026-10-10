@@ -363,7 +363,7 @@ class StudienDashboard:
                                                                                        fill="x", padx=1)
 
         # Raus (nur wenn im Semester)
-        if modul.semester_id:
+        if not modul.ist_frei():
             tk.Button(btn_bar, text="✕ Raus", font=("Helvetica", 8), bg="#fff7ed", fg="#ea580c",
                       relief="flat",
                       command=lambda m=modul: self.entferne_modul_aus_semester_click(m)).pack(side="left", expand=True,
