@@ -196,7 +196,7 @@ class StudienDashboard:
         vergangene_monate = self.studiengang.aktuelle_zeit_in_monat
         ziel_dauer = self.studiengang.ziel_abschlussdauer
 
-        self._zeichne_eine_kpi_karte(kpi_frame, 0, "NOTENSCHNITT", f"{schnitt:.2f}" if schnitt > 0 else "N/A",
+        self._zeichne_eine_kpi_karte(kpi_frame, 0, "NOTENSCHNITT", f"{schnitt:.2f}" if schnitt > 0 else "-",
                                      f"Ziel: {self.studiengang.ziel_notenschnitt or '-'}", FARBE_AKTIV)
 
         self._zeichne_eine_kpi_karte(kpi_frame, 1, "ECTS FORTSCHRITT", str(erreichte_ects),
@@ -342,7 +342,7 @@ class StudienDashboard:
         note_f.pack(side="right")
 
         note_val = modul.hole_note()
-        note_text = str(note_val) if note_val is not None else "--"
+        note_text = str(note_val) if note_val is not None else "-"
 
         tk.Label(note_f, text="NOTE", font=("Helvetica", 7, "bold"), fg=TEXT_HELL, bg=KARTE_HINTERGRUND).pack(
             anchor="e")
