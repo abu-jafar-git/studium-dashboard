@@ -27,7 +27,7 @@ def erstelle_schema(cursor: sqlite3.Cursor):
           `ziel_ects` INTEGER DEFAULT NULL,
           `aktuelle_ects` INTEGER DEFAULT 0,
           `ziel_abschlussdauer` INTEGER DEFAULT NULL,
-          `aktuelle_zeit_in_monat` INTEGER DEFAULT 0,
+          `aktuelle_zeit_in_monat` INTEGER DEFAULT NULL,
           `gesamte_module` INTEGER DEFAULT NULL,
           `abgeschlossene_module` INTEGER DEFAULT 0
         );

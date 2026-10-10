@@ -203,7 +203,7 @@ class StudienDashboard:
                                      f"von {ziel_ects}" if ziel_ects is not None else "von -", FARBE_BLAU,
                                      fortschritt=erreichte_ects, maximum=ziel_ects, stil="Blue")
 
-        self._zeichne_eine_kpi_karte(kpi_frame, 2, "ZEITVERLAUF (MONATE)", str(vergangene_monate),
+        self._zeichne_eine_kpi_karte(kpi_frame, 2, "ZEITVERLAUF (MONATE)", str(vergangene_monate) if vergangene_monate is not None else "-",
                                      f"von {ziel_dauer}" if ziel_dauer is not None else "von -", FARBE_BESTANDEN,
                                      fortschritt=vergangene_monate, maximum=ziel_dauer, stil="Green")
 

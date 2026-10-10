@@ -14,7 +14,7 @@ class Studiengang:
                  ziel_notenschnitt: Optional[float] = None, ziel_ects: Optional[int] = None,
                  beginn: Optional[date] = None, ziel_abschlussdauer: Optional[int] = None,
                  aktuelle_notenschnitt: Optional[float] = 0.0, aktuelle_ects: Optional[int] = 0,
-                 aktuelle_zeit_in_monat: Optional[int] = 0, gesamte_module: Optional[int] = 0,
+                 aktuelle_zeit_in_monat: Optional[int] = None, gesamte_module: Optional[int] = 0,
                  abgeschlossene_module: Optional[int] = 0):
         """
         Initialisiert einen neuen Studiengang mit allen Attributen, die einer
@@ -116,12 +116,13 @@ class Studiengang:
                     summe_ects += modul.ects
         return summe_ects
 
-    def berechne_zeitverlauf(self) -> int:
+    def berechne_zeitverlauf(self) -> Optional[int]:
         """
         Berechnet die Anzahl der Monate, die seit dem Studienbeginn vergangen sind.
+        Ohne Startdatum gibt es keinen Zeitverlauf (None).
         """
         if not self.beginn:
-            return 0
+            return None
         heute = date.today()
         vergangene_monate = (heute.year - self.beginn.year) * 12 + (heute.month - self.beginn.month)
         return max(0, vergangene_monate)
