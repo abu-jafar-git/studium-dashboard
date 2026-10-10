@@ -6,7 +6,7 @@ from backend.models.constants import (
     FARBE_BESTANDEN, FARBE_AKTIV, FARBE_BLAU, FARBE_VIOLETT, FARBE_INDIGO,
     SCHRIFT_TITEL, SCHRIFT_H2, SCHRIFT_KPI_WERT, SCHRIFT_KPI_LABEL, SCHRIFT_NORMAL, SCHRIFT_KLEIN,
     STATUS_FARBEN, STATUS_GEPLANT,
-    ALLE_MODUL_STATUS, MOEGLICHE_PRUEFUNGSARTEN, MOEGLICHE_VERSUCHE, WP_BEREICHE,
+    ALLE_MODUL_STATUS, MOEGLICHE_PRUEFUNGSARTEN, MOEGLICHE_VERSUCHE,
     STATUS_MIT_PRUEFUNGSLEISTUNG
 )
 from backend.models.modul import Modul, WahlpflichtModul
@@ -727,9 +727,6 @@ class StudienDashboard:
 
             # Verfügbare Bereiche laden
             verfuegbare_bereiche = self.controller.hole_verfuegbare_wp_bereiche()
-            # Standardvorschläge hinzufügen, falls DB leer
-            if not verfuegbare_bereiche:
-                verfuegbare_bereiche = WP_BEREICHE
 
             bereich_combo = ttk.Combobox(container, textvariable=bereich_var, values=verfuegbare_bereiche)
             if isinstance(modul, WahlpflichtModul) and modul.wahlpflichtbereich:

@@ -1,6 +1,7 @@
 from typing import Optional, Dict, Any, Tuple, List, Callable
 from backend.repository.repository import DBManager
 from backend.validators import StudiengangValidator, ModulValidator, PruefungsleistungValidator
+from backend.models.constants import WP_BEREICHE
 
 class DashboardController:
     """
@@ -40,7 +41,11 @@ class DashboardController:
         return [m for m in module if m.ist_frei()] if nur_freie else module
 
     def hole_verfuegbare_wp_bereiche(self) -> List[str]:
-        return self.repository.hole_verfuegbare_wp_bereiche()
+        bereiche = self.repository.hole_verfuegbare_wp_bereiche()
+        if bereiche:
+            return bereiche
+        else:
+            return WP_BEREICHE
 
     def setze_aktives_semester(self, semester_id: int) -> None:
         """Setzt ein Semester als aktiv und steuert die View."""
