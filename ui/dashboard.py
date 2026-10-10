@@ -497,13 +497,13 @@ class StudienDashboard:
         pool = []
 
         for mod in alle_module:
-            sem_nr = mod.semester_nummer
-            if sem_nr is not None:
+            if mod.ist_frei():
+                pool.append(mod)
+            else:
+                sem_nr = mod.semester_nummer
                 if sem_nr not in zugewiesen_nach_sem:
                     zugewiesen_nach_sem[sem_nr] = []
                 zugewiesen_nach_sem[sem_nr].append(mod)
-            else:
-                pool.append(mod)
 
         # Helper zum Zeichnen einer Zeile
         def zeichne_zeile(parent, mod):
@@ -582,10 +582,10 @@ class StudienDashboard:
             if b not in bereiche:
                 bereiche[b] = {'zugewiesen': [], 'pool': []}
 
-            if mod.semester_nummer is not None:
-                bereiche[b]['zugewiesen'].append(mod)
-            else:
+            if mod.ist_frei():
                 bereiche[b]['pool'].append(mod)
+            else:
+                bereiche[b]['zugewiesen'].append(mod)
 
         # Sortierte Bereiche durchgehen (A, B, C...)
         for bereich_name in sorted(bereiche.keys()):
