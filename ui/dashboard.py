@@ -325,7 +325,7 @@ class StudienDashboard:
         tk.Label(title_area, text=modul.name, font=("Helvetica", 10, "bold"), fg=TEXT_DUNKEL,
                  bg=KARTE_HINTERGRUND, wraplength=260, justify="left").pack(anchor="w")
 
-        art = modul.hole_pruefungsart() or "Klausur"
+        art = modul.hole_pruefungsart()
         tk.Label(inner, text=art, font=("Helvetica", 8), fg=TEXT_HELL, bg=KARTE_HINTERGRUND).pack(anchor="w")
 
         # --- UNTEN: Werte (ECTS/Note) ---
@@ -773,7 +773,7 @@ class StudienDashboard:
                 # Prüfungsart
                 tk.Label(pruefung_frame, text="Prüfungsart:", font=("Helvetica", 8, "bold"), bg="white",
                          fg=TEXT_HELL).pack(anchor="w")
-                art_var = tk.StringVar(value=modul.hole_pruefungsart() if modul else "Klausur")
+                art_var = tk.StringVar(value=modul.hole_pruefungsart() if modul else None)
                 art_combo = ttk.Combobox(pruefung_frame, textvariable=art_var, values=MOEGLICHE_PRUEFUNGSARTEN,
                                          state="readonly")
                 art_combo.pack(fill="x", pady=(2, 10))
@@ -816,7 +816,7 @@ class StudienDashboard:
                     side="left")
                 e_versuch = tk.Entry(row2, width=5, font=SCHRIFT_NORMAL, highlightthickness=1,
                                      highlightbackground=RAHMEN_FARBE)
-                val_versuch = modul.hole_versuch() if modul else "1"
+                val_versuch = modul.hole_versuch() if modul else None
                 if val_versuch is not None:
                     e_versuch.insert(0, str(val_versuch))
                 e_versuch.pack(side="left", padx=5)

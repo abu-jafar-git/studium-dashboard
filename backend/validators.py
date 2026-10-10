@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 from datetime import datetime
-from backend.models.constants import ALLE_MODUL_STATUS, MOEGLICHE_VERSUCHE
+from backend.models.constants import MOEGLICHE_VERSUCHE
 
 
 class StudiengangValidator:
@@ -103,10 +103,10 @@ class PruefungsleistungValidator:
     @staticmethod
     def validiere(daten: Dict[str, Any]) -> tuple[bool, List[str]]:
         """
-        Validiert und normalisiert Prüfungsleistungs-Daten.
-        Setzt Standardwerte, falls diese fehlen (z.B. Versuch).
+        Validiert Prüfungsleistungs-Daten.
+        Note, Prüfungsart und Versuch sind Pflichtfelder.
 
-        :param daten: Dictionary mit Prüfungsleistungs-Daten (wird modifiziert!)
+        :param daten: Dictionary mit Prüfungsleistungs-Daten
         :return: (ist_gueltig: bool, fehler: List[str])
         """
         fehler = []
@@ -123,16 +123,21 @@ class PruefungsleistungValidator:
             except ValueError:
                 fehler.append("- Note muss eine Zahl sein.")
 
-        # Versuch (Auto-Fill und Validierung)
-        if 'versuch' not in daten or not daten.get('versuch'):
-            daten['versuch'] = 1  # Standardwert setzen
+        # Prüfungsart (Pflichtfeld)
+        if not daten.get('pruefungsart'):
+            fehler.append("- Prüfungsart ist ein Pflichtfeld.")
 
-        try:
-            versuch = int(daten['versuch'])
-            if versuch not in MOEGLICHE_VERSUCHE:
-                fehler.append(f"- Versuch muss einer der folgenden Werte sein: {MOEGLICHE_VERSUCHE}")
-        except (ValueError, TypeError):
-            fehler.append("- Versuch muss eine ganze Zahl sein.")
+        # Versuch (Pflichtfeld)
+        versuch_str = str(daten.get('versuch', ''))
+        if not versuch_str:
+            fehler.append("- Versuch ist ein Pflichtfeld.")
+        else:
+            try:
+                versuch = int(versuch_str)
+                if versuch not in MOEGLICHE_VERSUCHE:
+                    fehler.append(f"- Versuch muss einer der folgenden Werte sein: {MOEGLICHE_VERSUCHE}")
+            except ValueError:
+                fehler.append("- Versuch muss eine ganze Zahl sein.")
 
         # Punkte (optional)
         punkte_str = str(daten.get('punkte', '')).replace(',', '.')
