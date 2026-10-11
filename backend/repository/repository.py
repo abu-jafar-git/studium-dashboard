@@ -14,6 +14,7 @@ class DatabaseConnection:
     """
     Verwaltet die physische Verbindung zur SQLite-Datenbank.
     """
+
     def __init__(self, db_pfad: str):
         self.db_pfad = db_pfad
         self.verbindung: Optional[sqlite3.Connection] = None
@@ -51,6 +52,7 @@ class CsvExporter:
     """
     Verantwortlich für den Export von Daten in das CSV-Format.
     """
+
     def __init__(self, db_connection: DatabaseConnection):
         self.db_connection = db_connection
 
@@ -96,15 +98,14 @@ class DBManager:
         :param db_connection: Eine Instanz von DatabaseConnection.
         """
         self.db_connection = db_connection
-        # Initialisiert den CSV-Exporter
         self.csv_exporter = CsvExporter(db_connection)
 
-    #Lesezugriff
+    # Lesezugriff
 
     def lade_studiengang(self) -> Studiengang:
         """
         Lädt den gesamten Objektgraphen aus der Datenbank.
-        Diese Methode gibt IMMER ein Studiengang-Objekt zurück.
+        Gibt immer ein Studiengang-Objekt zurück, auch wenn die Tabelle leer ist.
         """
         conn = self.db_connection.get_connection()
         cursor = conn.cursor()
@@ -276,9 +277,12 @@ class DBManager:
             ORDER BY s.nummer, m.id
         """
         cursor.execute(query)
-        return [Modul(id=r['id'], name=r['name'], code=r['code'], ects=r['ects'],
-                      status=r['status'], semester_id=r['semester_id'],
-                      semester_nummer=r['semester_nummer']) for r in cursor.fetchall()]
+        module = []
+        for r in cursor.fetchall():
+            module.append(Modul(id=r['id'], name=r['name'], code=r['code'], ects=r['ects'],
+                                status=r['status'], semester_id=r['semester_id'],
+                                semester_nummer=r['semester_nummer']))
+        return module
 
     def hole_alle_wahlpflichtmodule(self) -> List[WahlpflichtModul]:
         """
@@ -294,9 +298,12 @@ class DBManager:
             ORDER BY w.bereich, s.nummer, m.id
         """
         cursor.execute(query)
-        return [WahlpflichtModul(id=r['id'], name=r['name'], code=r['code'], ects=r['ects'],
-                                 status=r['status'], semester_id=r['semester_id'],
-                                 wahlpflichtbereich=r['bereich'], semester_nummer=r['semester_nummer']) for r in cursor.fetchall()]
+        module = []
+        for r in cursor.fetchall():
+            module.append(WahlpflichtModul(id=r['id'], name=r['name'], code=r['code'], ects=r['ects'],
+                                           status=r['status'], semester_id=r['semester_id'],
+                                           wahlpflichtbereich=r['bereich'], semester_nummer=r['semester_nummer']))
+        return module
 
     def hole_verfuegbare_wp_bereiche(self) -> List[str]:
         """
@@ -305,14 +312,17 @@ class DBManager:
         conn = self.db_connection.get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT DISTINCT bereich FROM wahlpflicht_modul WHERE bereich IS NOT NULL ORDER BY bereich")
-        return [row[0] for row in cursor.fetchall()]
+        bereiche = []
+        for row in cursor.fetchall():
+            bereiche.append(row[0])
+        return bereiche
 
+    # Schreibzugriff
 
-    #Schreibzugriff
     def aktualisiere_kpis(self, studiengang):
         """
         Schreibt die bereits berechneten KPIs in die Datenbank.
-        Diese Methode macht NUR SQL - keine Berechnungen!
+        Macht nur SQL, keine Berechnungen.
         """
         conn = self.db_connection.get_connection()
 
@@ -368,7 +378,7 @@ class DBManager:
     def loesche_modul(self, modul_id: int):
         """
         Löscht ein Modul aus der Datenbank.
-        Macht NUR SQL - keine Validierung, keine KPI-Aktualisierung!
+        Macht nur SQL, keine Validierung und keine KPI-Aktualisierung.
         """
         conn = self.db_connection.get_connection()
         try:
@@ -401,7 +411,10 @@ class DBManager:
         ziel_ects = int(daten.get('ziel_ects', 0))
         ziel_dauer = int(daten.get('ziel_dauer', 0))
         beginn_str = daten.get('beginn')
-        beginn_db = datetime.strptime(beginn_str, '%d.%m.%Y').strftime('%Y-%m-%d') if beginn_str else None
+        if beginn_str:
+            beginn_db = datetime.strptime(beginn_str, '%d.%m.%Y').strftime('%Y-%m-%d')
+        else:
+            beginn_db = None
 
         try:
             sql = "UPDATE studiengang SET name = ?, ziel_notenschnitt = ?, ziel_ects = ?, ziel_abschlussdauer = ?, beginn = ? WHERE id = 1"
@@ -468,8 +481,8 @@ class DBManager:
         except sqlite3.Error:
             return False
 
+    # Verwaltung
 
-    #Verwaltung
     def initialisiere_datenbank_neu(self, modus: str):
         """
         Startet den kompletten Neuaufbau der Datenbank.
@@ -496,8 +509,8 @@ class DBManager:
         except sqlite3.Error as e:
             return False, f"Datenbankfehler: {e}"
 
+    # Private Hilfsmethoden
 
-    #Private Hilfsmethoden
     def _row_zu_modul(self, row) -> Modul:
         """Baut ein Modul- oder WahlpflichtModul-Objekt aus einer DB-Row."""
         if row['bereich']:
@@ -527,7 +540,7 @@ class DBManager:
                 print(f"[INFO] Warnung: Unbekanntes Datumsformat: {datum_str}")
                 return None
 
-    # Hilfsmethode für bearbeite_modul_pruefungsleistung. Übersichtlichkeitshalber wurden die hier verlegt.
+    # Hilfsmethoden für bearbeite_modul_pruefungsleistung
     def _speichere_modul(self, daten: Dict[str, Any], modul_id: Optional[int] = None, commit: bool = True) -> Tuple[bool, str]:
         """
         Speichert die Kerndaten eines Moduls (nur SQL, keine Validierung).
@@ -570,12 +583,21 @@ class DBManager:
         """
         conn = self.db_connection.get_connection()
         note_str = str(daten.get('note', '')).replace(',', '.')
-        note = float(note_str) if note_str else None
+        if note_str:
+            note = float(note_str)
+        else:
+            note = None
         punkte_str = str(daten.get('punkte', '')).replace(',', '.')
-        punkte = float(punkte_str) if punkte_str else None
+        if punkte_str:
+            punkte = float(punkte_str)
+        else:
+            punkte = None
         versuch = int(daten.get('versuch'))
         datum_str = daten.get('datum')
-        datum_db = datetime.strptime(datum_str, '%d.%m.%Y').strftime('%Y-%m-%d') if datum_str else None
+        if datum_str:
+            datum_db = datetime.strptime(datum_str, '%d.%m.%Y').strftime('%Y-%m-%d')
+        else:
+            datum_db = None
 
         cursor = conn.cursor()
         try:
