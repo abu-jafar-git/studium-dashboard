@@ -8,13 +8,10 @@ from backend.repository.db_seeder_test_daten import fuelle_datenbank as fuelle_t
 
 def erstelle_schema(cursor: sqlite3.Cursor):
     """
-    Definiert und erstellt die gesamte Datenbankstruktur (Tabellen, Indizes).
-    Dies ist der "Single Source of Truth" für das Datenbankschema.
+    Erstellt alle Tabellen und Indizes der Datenbank.
 
     :param cursor: Ein aktiver sqlite3-Cursor, um die Befehle auszuführen.
     """
-    # Das SQL-Skript enthält alle CREATE-Befehle.
-    # Es wird hier zentral verwaltet.
     sql_script = """
         PRAGMA foreign_keys = ON;
 
@@ -74,7 +71,6 @@ def erstelle_schema(cursor: sqlite3.Cursor):
         CREATE INDEX modul_semester_id ON modul(semester_id);
         CREATE INDEX pruefungsleistung_modul_id ON pruefungsleistung(modul_id);
     """
-    # Führt das gesamte Skript auf einmal aus.
     cursor.executescript(sql_script)
 
 
@@ -83,12 +79,11 @@ def initialisiere_datenbank(db_pfad: str, modus: str, backup_ordner: str = "data
     Steuert den gesamten Prozess der Datenbank-Initialisierung.
     Erstellt ein Backup, löscht die alte DB und baut sie je nach Modus neu auf.
 
-    :param db_pfad: Der Pfad zur Datenbankdatei (z.B. "studium_verwaltung.db").
+    :param db_pfad: Der Pfad zur Datenbankdatei (z.B. "database/studium_verwaltung.db").
     :param modus: Der Modus für die Befüllung ("leer" oder "test").
     :param backup_ordner: Der Name des Ordners für die Backups.
     """
-
-    # 1. Backup der alten Datenbank erstellen, falls sie existiert.
+    # Backup der alten Datenbank erstellen, falls sie existiert
     if os.path.exists(db_pfad):
         if not os.path.exists(backup_ordner):
             os.makedirs(backup_ordner)
@@ -101,33 +96,28 @@ def initialisiere_datenbank(db_pfad: str, modus: str, backup_ordner: str = "data
         except Exception as e:
             print(f"[FEHLER] Fehler beim Erstellen des Backups: {e}")
 
-    # 2. Alte Datenbank löschen, um einen sauberen Start zu gewährleisten.
+        # Alte Datenbank löschen, um einen sauberen Start zu gewährleisten.
         try:
             os.remove(db_pfad)
         except Exception as e:
             print(f"[FEHLER] Fehler beim Löschen der alten Datenbank: {e}")
             raise e
 
-    # 3. Neue Datenbankverbindung herstellen (erstellt die leere Datei) und Schema anlegen.
+    # Neue Datenbank anlegen (connect erstellt die leere Datei) und Schema erstellen
+    conn = None
     try:
         conn = sqlite3.connect(db_pfad)
         cursor = conn.cursor()
-
-        # 4. Tabellenstruktur über die zentrale Schema-Funktion erstellen.
         erstelle_schema(cursor)
 
         # Änderungen am Schema committen, bevor die Seeder aufgerufen werden.
         conn.commit()
 
-        # 5. Datenbank je nach Modus mit Daten befüllen.
+        # Datenbank je nach Modus mit Daten befüllen.
         if modus == "test":
             fuelle_test_db(conn)
         else:
             fuelle_leere_db(conn)
-
-    except sqlite3.Error as e:
-        raise e
     finally:
-        # 6. Verbindung sauber schließen.
-        if 'conn' in locals() and conn:
+        if conn:
             conn.close()
