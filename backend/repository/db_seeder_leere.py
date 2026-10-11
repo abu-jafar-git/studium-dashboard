@@ -1,5 +1,6 @@
 import sqlite3
 
+
 def fuelle_datenbank(conn: sqlite3.Connection):
     """
     Füllt die Datenbank mit einem leeren Studiengang.

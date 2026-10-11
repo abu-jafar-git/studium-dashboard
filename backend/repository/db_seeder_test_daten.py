@@ -1,5 +1,6 @@
 import sqlite3
 
+
 def fuelle_datenbank(conn: sqlite3.Connection):
     """
     Füllt die Datenbank mit den 61 Test-Modulen.
@@ -7,19 +8,22 @@ def fuelle_datenbank(conn: sqlite3.Connection):
     """
     cursor = conn.cursor()
 
-    # 1. Studiengang EINMALIG anlegen
+    # Studiengang anlegen
     cursor.execute("""
-            INSERT INTO studiengang
-            (id, name, ziel_notenschnitt, ziel_ects, ziel_abschlussdauer, beginn, gesamte_module)
-            VALUES (1, 'B.Sc. Cyber Security', 2.0, 180, 36, '01.09.2025', 36)
-        """)
+        INSERT INTO studiengang
+        (id, name, ziel_notenschnitt, ziel_ects, ziel_abschlussdauer, beginn, gesamte_module)
+        VALUES (1, 'B.Sc. Cyber Security', 2.0, 180, 36, '01.09.2025', 36)
+    """)
 
-    # 2. Semester 1-6 anlegen (Semester 3 ist aktiv)
+    # Semester 1-6 anlegen (Semester 3 ist aktiv)
     for i in range(1, 7):
-        status = 'Aktiv' if i == 3 else 'Nicht aktiv'
+        if i == 3:
+            status = 'Aktiv'
+        else:
+            status = 'Nicht aktiv'
         cursor.execute("INSERT INTO semester (id, studiengang_id, nummer, status) VALUES (?, 1, ?, ?)", (i, i, status))
 
-    # 3. Module, Noten & Wahlpflicht-Zuweisung
+    # Module, Noten und Wahlpflicht-Zuweisung
     # Daten-Format: (ID, Semester_ID, Name, Code, ECTS, Status, Note, Art, Versuch, Datum, Punkte, Bereich)
     test_daten = [
         (11, 1, 'Betriebssysteme, Rechnernetze und verteilte Systeme', 'DLBIBRVS01', 5, 'Bestanden', 1.7, 'Klausur',
