@@ -166,7 +166,7 @@ class DBManager:
             if modul_id not in module_map:
                 modul_obj = self._row_zu_modul(row)
                 module_map[modul_id] = modul_obj
-                if modul_obj.semester_id and modul_obj.semester_id in semester_map:
+                if modul_obj.semester_id in semester_map:
                     semester_map[modul_obj.semester_id].module.append(modul_obj)
 
             if row['leistung_id']:
@@ -602,8 +602,6 @@ class DBManager:
         cursor = conn.cursor()
         try:
             art = daten.get('pruefungsart')
-            if not art:
-                art = None
 
             cursor.execute("SELECT id FROM pruefungsleistung WHERE modul_id=?", (modul_id,))
             if cursor.fetchone():
