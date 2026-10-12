@@ -13,24 +13,24 @@ def main():
     """
     db_connection = None
     try:
-        # 1. Datenbank-Verbindung initialisieren.
+        # Datenbank-Verbindung aufbauen
         db_connection = DatabaseConnection(DB_DATEI)
         db_connection.verbinden()
 
-        # 2. DBManager initialisieren (nutzt die Verbindung).
+        # DBManager erstellen (nutzt die Verbindung)
         db_manager = DBManager(db_connection)
 
-        # 3. Controller erstellen.
+        # Controller erstellen
         controller = DashboardController(db_manager)
 
-        # 4. Hauptfenster (root) für die GUI erstellen.
+        # Hauptfenster (root) für die GUI erstellen
         root = tk.Tk()
 
-        # 5. Die Haupt-GUI-Klasse initialisieren und Controller übergeben. Man kann da theoretisch direkt Studiendashboard aufrufen
-        # ohne es in app zu speichern, aber ich lass es falls man es zum debuggen braucht.
+        # Dashboard erstellen und den Controller übergeben
+        # app wird nicht weiter genutzt, ist aber beim Debuggen praktisch
         app = StudienDashboard(root, controller)
 
-        # 6. Die GUI-Event-Schleife starten.
+        # GUI-Event-Schleife starten
         root.mainloop()
 
     except Exception as e:
