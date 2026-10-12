@@ -516,13 +516,14 @@ class StudienDashboard:
                     zugewiesen_nach_sem[sem_nr] = []
                 zugewiesen_nach_sem[sem_nr].append(mod)
 
-        # Helper zum Zeichnen einer Zeile
+        # Hilfsfunktion zum Zeichnen einer Zeile
         def zeichne_zeile(parent, mod):
             row = tk.Frame(parent, bg="white", pady=5)
             row.pack(fill="x", pady=2)
 
             info = f"{mod.name}"
-            if mod.code: info += f" ({mod.code})"
+            if mod.code:
+                info += f" ({mod.code})"
 
             tk.Label(row, text=info, font=SCHRIFT_NORMAL, bg="white", wraplength=350, justify="left").pack(side="left")
 
@@ -539,7 +540,7 @@ class StudienDashboard:
 
             tk.Frame(parent, bg=RAHMEN_FARBE, height=1).pack(fill="x")
 
-        # 1. Zugewiesene (nach Semester sortiert)
+        # Zugewiesene Module (nach Semester sortiert)
         if zugewiesen_nach_sem:
             tk.Label(content, text="Im Semester zugewiesen", font=("Helvetica", 12, "bold"), bg=HINTERGRUND_FARBE,
                      fg=FARBE_BLAU).pack(anchor="w", pady=(20, 5))
@@ -552,7 +553,7 @@ class StudienDashboard:
                 for mod in zugewiesen_nach_sem[sem_nr]:
                     zeichne_zeile(sem_frame, mod)
 
-        # 2. Pool
+        # Pool
         tk.Label(content, text="Nicht zugewiesen (Pool)", font=("Helvetica", 12, "bold"), bg=HINTERGRUND_FARBE,
                  fg=TEXT_DUNKEL).pack(anchor="w", pady=(20, 5))
         if not pool:
@@ -606,13 +607,14 @@ class StudienDashboard:
                                           pady=10)
             bereich_frame.pack(fill="x", pady=15, padx=5)
 
-            # Helper für Zeilen
+            # Hilfsfunktion für Zeilen
             def zeichne_wp_zeile(parent, mod):
                 row = tk.Frame(parent, bg="white", pady=5)
                 row.pack(fill="x", pady=2)
 
                 info = f"{mod.name}"
-                if mod.code: info += f" ({mod.code})"
+                if mod.code:
+                    info += f" ({mod.code})"
 
                 tk.Label(row, text=info, font=SCHRIFT_NORMAL, bg="white", wraplength=350, justify="left").pack(
                     side="left")
@@ -628,22 +630,21 @@ class StudienDashboard:
 
                 tk.Frame(parent, bg=RAHMEN_FARBE, height=1).pack(fill="x")
 
-            # 1. Zugewiesene
+            # Zugewiesene Module
             if bereiche[bereich_name]['zugewiesen']:
                 tk.Label(bereich_frame, text="Im Semester zugewiesen:", font=("Helvetica", 10, "bold"),
                          bg="white", fg=TEXT_DUNKEL).pack(anchor="w", pady=(5, 5))
                 for mod in bereiche[bereich_name]['zugewiesen']:
                     zeichne_wp_zeile(bereich_frame, mod)
 
-            # 2. Pool
+            # Pool
             if bereiche[bereich_name]['pool']:
                 tk.Label(bereich_frame, text="Nicht zugewiesen (Pool):", font=("Helvetica", 10, "bold"),
                          bg="white", fg=TEXT_HELL).pack(anchor="w", pady=(15, 5))
                 for mod in bereiche[bereich_name]['pool']:
                     zeichne_wp_zeile(bereich_frame, mod)
 
-
-    #Dialoge
+    # Dialoge
 
     def oeffne_einstellungen(self):
         """Öffnet ein Fenster zum Bearbeiten der Studiengangs-Details."""
@@ -671,7 +672,10 @@ class StudienDashboard:
         e_name = create_input("Name des Studiengangs:", self.studiengang.name)
         e_schnitt = create_input("Ziel-Notenschnitt:", self.studiengang.ziel_notenschnitt)
         e_ects = create_input("ECTS Gesamtzahl:", self.studiengang.ziel_ects)
-        beginn_str = self.studiengang.beginn.strftime("%d.%m.%Y") if self.studiengang.beginn else ""
+        if self.studiengang.beginn:
+            beginn_str = self.studiengang.beginn.strftime("%d.%m.%Y")
+        else:
+            beginn_str = ""
         e_beginn = create_input("Startdatum (TT.MM.JJJJ):", beginn_str)
         e_dauer = create_input("Ziel-Dauer in Monaten:", self.studiengang.ziel_abschlussdauer)
 
@@ -696,7 +700,7 @@ class StudienDashboard:
         Öffnet einen Dialog zum Bearbeiten oder Erstellen eines Moduls.
         Zeigt dynamisch Felder für Prüfungsleistungen an, wenn der Status 'Bestanden'/'Nicht bestanden' ist.
         """
-        # HIER WURDE GEÄNDERT: Modul komplett laden, falls ID vorhanden
+        # Modul komplett laden (mit Prüfungsleistung)
         if modul:
             geladenes_modul = self.controller.lade_modul(modul.id)
             if geladenes_modul:
@@ -714,7 +718,7 @@ class StudienDashboard:
 
         tk.Label(container, text="Modul-Details", font=SCHRIFT_H2, bg="white").pack(pady=(0, 20))
 
-        # --- Hilfsfunktion für Eingabefelder ---
+        # Hilfsfunktion für Eingabefelder
         def create_input(label, val):
             tk.Label(container, text=label, font=("Helvetica", 8, "bold"), bg="white", fg=TEXT_HELL).pack(anchor="w")
             ent = tk.Entry(container, font=SCHRIFT_NORMAL, highlightthickness=1, highlightbackground=RAHMEN_FARBE)
@@ -723,7 +727,7 @@ class StudienDashboard:
             ent.pack(fill="x", pady=(2, 12))
             return ent
 
-        # --- 1. Basis-Daten (Immer sichtbar) ---
+        # Basis-Daten (immer sichtbar)
         e_name = create_input("Modulname:", modul.name if modul else "")
         e_code = create_input("Modulcode:", modul.code if modul else "")
         e_ects = create_input("ECTS:", modul.ects if modul else "")
@@ -749,12 +753,12 @@ class StudienDashboard:
         status_combo = ttk.Combobox(container, textvariable=status_var, values=ALLE_MODUL_STATUS, state="readonly")
         status_combo.pack(fill="x", pady=(2, 12))
 
-        # --- Warn-Label für Statuswechsel ---
+        # Warn-Label für Statuswechsel
         warn_label = tk.Label(container, text="⚠️ Achtung: Prüfungsleistung wird gelöscht!",
                               font=("Helvetica", 8, "bold"), bg="white", fg="#ef4444")
         # Standardmäßig versteckt, wird in update_ui gezeigt
 
-        # --- 2. Dynamischer Bereich für Prüfungsleistungen ---
+        # Dynamischer Bereich für Prüfungsleistungen
         pruefung_frame = tk.Frame(container, bg="white")
         pruefung_frame.pack(fill="x", pady=(10, 0))
 
@@ -771,7 +775,10 @@ class StudienDashboard:
             status = status_var.get()
 
             # Warn-Logik
-            ursprung_status = modul.status if modul else STATUS_GEPLANT
+            if modul:
+                ursprung_status = modul.status
+            else:
+                ursprung_status = STATUS_GEPLANT
             if ursprung_status in STATUS_MIT_PRUEFUNGSLEISTUNG and status not in STATUS_MIT_PRUEFUNGSLEISTUNG:
                 warn_label.pack(pady=(5, 0))
             else:
@@ -797,8 +804,12 @@ class StudienDashboard:
                 tk.Label(row1, text="Note:", font=("Helvetica", 8, "bold"), bg="white", fg=TEXT_HELL).pack(side="left")
                 e_note = tk.Entry(row1, width=10, font=SCHRIFT_NORMAL, highlightthickness=1,
                                   highlightbackground=RAHMEN_FARBE)
-                val_note = modul.hole_note() if modul else ""
-                if val_note: e_note.insert(0, str(val_note))
+                if modul:
+                    val_note = modul.hole_note()
+                else:
+                    val_note = ""
+                if val_note:
+                    e_note.insert(0, str(val_note))
                 e_note.pack(side="left", padx=(5, 20))
                 widgets_pruefung['note'] = e_note
 
@@ -806,8 +817,12 @@ class StudienDashboard:
                     side="left")
                 e_punkte = tk.Entry(row1, width=10, font=SCHRIFT_NORMAL, highlightthickness=1,
                                     highlightbackground=RAHMEN_FARBE)
-                val_punkte = modul.hole_punkte() if modul else ""
-                if val_punkte: e_punkte.insert(0, str(val_punkte))
+                if modul:
+                    val_punkte = modul.hole_punkte()
+                else:
+                    val_punkte = ""
+                if val_punkte:
+                    e_punkte.insert(0, str(val_punkte))
                 e_punkte.pack(side="left", padx=5)
                 widgets_pruefung['punkte'] = e_punkte
 
@@ -818,8 +833,12 @@ class StudienDashboard:
                 tk.Label(row2, text="Datum:", font=("Helvetica", 8, "bold"), bg="white", fg=TEXT_HELL).pack(side="left")
                 e_datum = tk.Entry(row2, width=12, font=SCHRIFT_NORMAL, highlightthickness=1,
                                    highlightbackground=RAHMEN_FARBE)
-                val_datum = modul.hole_datum() if modul else ""
-                if val_datum: e_datum.insert(0, val_datum.strftime("%d.%m.%Y"))
+                if modul:
+                    val_datum = modul.hole_datum()
+                else:
+                    val_datum = ""
+                if val_datum:
+                    e_datum.insert(0, val_datum.strftime("%d.%m.%Y"))
                 e_datum.pack(side="left", padx=(5, 20))
                 widgets_pruefung['datum'] = e_datum
 
@@ -827,7 +846,10 @@ class StudienDashboard:
                     side="left")
                 e_versuch = tk.Entry(row2, width=5, font=SCHRIFT_NORMAL, highlightthickness=1,
                                      highlightbackground=RAHMEN_FARBE)
-                val_versuch = modul.hole_versuch() if modul else None
+                if modul:
+                    val_versuch = modul.hole_versuch()
+                else:
+                    val_versuch = None
                 if val_versuch is not None:
                     e_versuch.insert(0, str(val_versuch))
                 e_versuch.pack(side="left", padx=5)
@@ -840,7 +862,7 @@ class StudienDashboard:
         update_ui()
 
         def speichern():
-            # --- 1. Daten sammeln (ohne Validierung in GUI) ---
+            # Daten sammeln (die Validierung macht der Controller)
             basis_daten = {
                 'name': e_name.get(),
                 'code': e_code.get(),
@@ -862,7 +884,7 @@ class StudienDashboard:
                     'versuch': widgets_pruefung['versuch'].get()
                 }
 
-            # --- 2. Navigation nach Erfolg definieren und an Controller übergeben ---
+            # Navigation nach dem Speichern
             def nach_erfolg():
                 win.destroy()
                 if callback_nach_speichern:
@@ -899,7 +921,7 @@ class StudienDashboard:
                   bg=FARBE_VIOLETT, fg="white", font=SCHRIFT_NORMAL, width=25, pady=10).pack(pady=10)
 
     def oeffne_modul_hinzufuegen_dialog(self, semester_id):
-        """Schritt 1: Auswahl Pflicht oder Wahlpflicht."""
+        """Fragt, ob ein Pflicht- oder Wahlpflichtmodul hinzugefügt wird."""
         win = tk.Toplevel(self.root)
         win.title("Modul hinzufügen")
         win.geometry("400x300")
@@ -918,7 +940,7 @@ class StudienDashboard:
                   bg=FARBE_VIOLETT, fg="white", font=SCHRIFT_NORMAL, width=25, pady=10).pack(pady=10)
 
     def oeffne_pool_auswahl_liste(self, typ, semester_id):
-        """Schritt 3: Liste der freien Module zum Auswählen."""
+        """Zeigt die freien Module zum Zuweisen an."""
         win = tk.Toplevel(self.root)
         win.title(f"Freie {typ}module")
         win.geometry("500x600")
@@ -939,7 +961,7 @@ class StudienDashboard:
         scroll_area.pack(fill="both", expand=True, padx=10, pady=10)
         content = scroll_area.scrollable_frame
 
-        # Daten holen (nur die ohne Semester!)
+        # Nur freie Module holen (ohne Semester)
         if typ == "Pflicht":
             freie_module = self.controller.hole_alle_pflichtmodule(nur_freie=True)
         else:
@@ -950,7 +972,7 @@ class StudienDashboard:
                 pady=20)
             return
 
-        # Helper für Zuweisung
+        # Hilfsfunktion für die Zuweisung
         def zuweisen(mod_id):
             self.controller.weise_modul_semester_zu(
                 mod_id,
@@ -963,7 +985,8 @@ class StudienDashboard:
             bereiche = {}
             for mod in freie_module:
                 b = mod.wahlpflichtbereich
-                if b not in bereiche: bereiche[b] = []
+                if b not in bereiche:
+                    bereiche[b] = []
                 bereiche[b].append(mod)
 
             for b_name in sorted(bereiche.keys()):
@@ -983,7 +1006,7 @@ class StudienDashboard:
                 btn.pack(fill="x", pady=1)
 
     def oeffne_modul_typ_auswahl(self, typ, semester_id):
-        """Schritt 2: Neu erstellen oder aus Pool."""
+        """Fragt, ob ein neues Modul erstellt oder eines aus dem Pool gewählt wird."""
         win = tk.Toplevel(self.root)
         win.title(f"{typ}modul hinzufügen")
         win.geometry("400x350")
@@ -1017,19 +1040,19 @@ class StudienDashboard:
     def oeffne_testdaten_dialog(self):
         """Fragt den Nutzer und lädt dann die Testdaten."""
         if not messagebox.askyesno("Testdaten laden",
-                               "Möchtest du das System auf die Testdaten zurücksetzen?\n\nAktuelle Daten werden überschrieben."):
+                                   "Möchtest du das System auf die Testdaten zurücksetzen?\n\nAktuelle Daten werden überschrieben."):
             return
         self.controller.testdaten_laden()
-
 
     def oeffne_db_leeren_dialog(self):
         """Fragt den Nutzer und leert dann die Datenbank."""
         if not messagebox.askyesno("Datenbank leeren",
-                               "Möchtest du wirklich ALLE Daten löschen?\n\nDie Datenbank wird komplett geleert."):
+                                   "Möchtest du wirklich ALLE Daten löschen?\n\nDie Datenbank wird komplett geleert."):
             return
         self.controller.datenbank_leeren()
 
-    #Event-Handling
+    # Button-Aktionen
+
     def _add_semester(self):
         """Delegiert das Hinzufügen eines neuen Semesters an den Controller."""
         self.controller.neues_semester_erstellen()
@@ -1046,7 +1069,9 @@ class StudienDashboard:
 
     def entferne_modul_aus_semester_click(self, modul):
         """Entfernt ein Modul aus dem Semester (bleibt im Pool)."""
-        if messagebox.askyesno("Aus Semester entfernen", f"Soll das Modul '{modul.name}' aus dem Semester entfernt werden?\n(Es bleibt im System erhalten)"):
+        if messagebox.askyesno("Aus Semester entfernen",
+                               f"Soll das Modul '{modul.name}' aus dem Semester entfernt werden?\n"
+                               f"(Es bleibt im System erhalten)"):
             self.controller.modul_aus_semester_entfernen(modul.id)
 
     def exportiere_csv(self):
