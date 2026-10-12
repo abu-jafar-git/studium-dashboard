@@ -6,8 +6,8 @@ from backend.models.constants import STATUS_MIT_PRUEFUNGSLEISTUNG
 
 class Studiengang:
     """
-    Repräsentiert einen Studiengang. Diese Klasse ist ein Daten-Container für die
-    in der Datenbank gespeicherten Werte und bietet Methoden zur Neuberechnung.
+    Repräsentiert einen Studiengang.
+    Hält die zugehörigen Semester und berechnet die Studiengang-KPIs.
     """
 
     def __init__(self, name: str = "Neuer Studiengang", id: Optional[int] = None,
@@ -40,8 +40,8 @@ class Studiengang:
 
     def verknuepfe_semester(self, semester: Semester):
         """
-        (Intern) Fügt ein bereits erstelltes Semester-Objekt zur internen Liste hinzu.
-        Wird typischerweise vom DBManager beim Laden der Daten verwendet.
+        Fügt ein bereits erstelltes Semester-Objekt zur Liste hinzu.
+        Wird vom DBManager beim Laden der Daten verwendet.
         """
         self.semester_liste.append(semester)
 
@@ -49,7 +49,6 @@ class Studiengang:
         """
         Erstellt ein neues Semester basierend auf dem aktuellen Zustand (nächste Nummer),
         fügt es der internen Liste hinzu und gibt das neue Objekt zurück.
-        Dies ist die primäre Methode für die Geschäftslogik.
         """
         naechste_nummer = len(self.semester_liste) + 1
         neues_semester = Semester(nummer=naechste_nummer, studiengang_id=self.id)
@@ -62,7 +61,7 @@ class Studiengang:
         Wirft einen ValueError, wenn die Bedingungen nicht erfüllt sind.
         """
         if not self.semester_liste:
-            raise ValueError("Keine Semester vorhanden, das gelöscht werden könnten.")
+            raise ValueError("Keine Semester vorhanden, die gelöscht werden könnten.")
 
         letztes_semester = self.semester_liste[-1]
 
@@ -75,7 +74,11 @@ class Studiengang:
         """
         Zählt alle Module des Studiengangs über alle Semester.
         """
-        return sum(len(s.module) for s in self.semester_liste)
+        anzahl_module = 0
+
+        for semester in self.semester_liste:
+            anzahl_module += len(semester.module)
+        return anzahl_module
 
     def aktualisiere_kpis(self) -> None:
         """
@@ -88,7 +91,7 @@ class Studiengang:
         self.abgeschlossene_module = self.berechne_modul_fortschritt()
         self.gesamte_module = self.berechne_gesamt_module()
 
-    # --- Interne Berechnungsmethoden ---
+    # Interne Berechnungsmethoden
 
     def berechne_notenschnitt(self) -> float:
         """
@@ -96,6 +99,7 @@ class Studiengang:
         """
         summe_aller_noten = 0.0
         anzahl_noten = 0
+
         for semester in self.semester_liste:
             for modul in semester.module:
                 if modul.status in STATUS_MIT_PRUEFUNGSLEISTUNG:
@@ -103,13 +107,17 @@ class Studiengang:
                     if leistung and leistung.note is not None:
                         summe_aller_noten += leistung.note
                         anzahl_noten += 1
-        return summe_aller_noten / anzahl_noten if anzahl_noten > 0 else 0.0
+        if anzahl_noten > 0:
+            return summe_aller_noten / anzahl_noten
+        else:
+            return 0.0
 
     def berechne_ects_fortschritt(self) -> int:
         """
         Summiert die ECTS-Punkte aller bestandenen Module.
         """
         summe_ects = 0
+
         for semester in self.semester_liste:
             for modul in semester.module:
                 if modul.ist_bestanden():
@@ -123,6 +131,7 @@ class Studiengang:
         """
         if not self.beginn:
             return None
+
         heute = date.today()
         vergangene_monate = (heute.year - self.beginn.year) * 12 + (heute.month - self.beginn.month)
         return max(0, vergangene_monate)
@@ -132,6 +141,7 @@ class Studiengang:
         Zählt die Anzahl aller Module, die den Status 'Bestanden' haben.
         """
         anzahl_bestanden = 0
+
         for semester in self.semester_liste:
             for modul in semester.module:
                 if modul.ist_bestanden():
