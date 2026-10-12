@@ -4,7 +4,7 @@ from backend.querschnitt.validators import StudiengangValidator, ModulValidator,
 from backend.querschnitt.constants import WP_BEREICHE
 
 
-class DashboardController:
+class Controller:
     """
     Der Controller verbindet die View mit der Domäne und dem Repository.
     Er koordiniert die Abläufe, die Fachlogik liegt in den Modellen.

@@ -1,6 +1,6 @@
 import tkinter as tk
 from backend.repository.repository import DBManager, DatabaseConnection
-from backend.controller import DashboardController
+from backend.controller import Controller
 from ui.dashboard import StudienDashboard
 
 DB_DATEI = "database/studium_verwaltung.db"
@@ -21,7 +21,7 @@ def main():
         db_manager = DBManager(db_connection)
 
         # Controller erstellen
-        controller = DashboardController(db_manager)
+        controller = Controller(db_manager)
 
         # Hauptfenster (root) für die GUI erstellen
         root = tk.Tk()

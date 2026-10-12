@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
-from backend.controller import DashboardController
+from backend.controller import Controller
 from backend.querschnitt.constants import (
     HINTERGRUND_FARBE, KARTE_HINTERGRUND, TEXT_DUNKEL, TEXT_HELL, RAHMEN_FARBE,
     FARBE_BESTANDEN, FARBE_AKTIV, FARBE_BLAU, FARBE_VIOLETT, FARBE_INDIGO,
@@ -80,10 +80,10 @@ class StudienDashboard:
     """
     Die Haupt-GUI-Klasse der Anwendung.
     Sie ist verantwortlich für das Zeichnen des Dashboards.
-    Die Logik und DB-Kommunikation erfolgt über den DashboardController.
+    Die Logik und DB-Kommunikation erfolgt über den Controller.
     """
 
-    def __init__(self, root: tk.Tk, controller: DashboardController):
+    def __init__(self, root: tk.Tk, controller: Controller):
         """
         Initialisiert das Dashboard.
 
@@ -1052,7 +1052,7 @@ class StudienDashboard:
             return
         self.controller.datenbank_leeren()
 
-    # Button-Aktionen
+    # Event Handling
 
     def _add_semester(self):
         """Delegiert das Hinzufügen eines neuen Semesters an den Controller."""
