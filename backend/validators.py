@@ -86,7 +86,6 @@ class ModulValidator:
         except (ValueError, TypeError):
             fehler.append("- ECTS muss eine ganze Zahl sein.")
 
-
         # Wahlpflichtbereich
         if 'bereich' in daten and not daten.get('bereich'):
             fehler.append("- Bereich ist für ein Wahlpflichtmodul ein Pflichtfeld.")
