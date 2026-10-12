@@ -3,10 +3,11 @@ from backend.repository.repository import DBManager
 from backend.validators import StudiengangValidator, ModulValidator, PruefungsleistungValidator
 from backend.models.constants import WP_BEREICHE
 
+
 class DashboardController:
     """
-    Der Controller verbindet die Benutzeroberfläche (View) mit der Datenbank (Model).
-    Er orchestriert den Ablauf, führt die Geschäftslogik aus und stellt Datenintegrität sicher.
+    Der Controller verbindet die View mit der Domäne und dem Repository.
+    Er koordiniert die Abläufe, die Fachlogik liegt in den Modellen.
     """
 
     def __init__(self, db_manager: DBManager):
@@ -18,8 +19,8 @@ class DashboardController:
         self.view = view
         self._aktualisiere_kpis()
 
+    # Lesezugriff
 
-    #Daten-Abruf Lesezugriff
     def lade_studiengang(self):
         """Lädt das Studiengang-Objekt aus der Datenbank."""
         return self.repository.lade_studiengang()
@@ -33,14 +34,31 @@ class DashboardController:
         return self.repository.lade_semester(semester_id)
 
     def hole_alle_pflichtmodule(self, nur_freie: bool = False):
+        """Lädt alle Pflichtmodule, auf Wunsch nur die freien."""
         module = self.repository.hole_alle_pflichtmodule()
-        return [m for m in module if m.ist_frei()] if nur_freie else module
+        if nur_freie:
+            freie_module = []
+            for m in module:
+                if m.ist_frei():
+                    freie_module.append(m)
+            return freie_module
+        else:
+            return module
 
     def hole_alle_wahlpflichtmodule(self, nur_freie: bool = False):
+        """Lädt alle Wahlpflichtmodule, auf Wunsch nur die freien."""
         module = self.repository.hole_alle_wahlpflichtmodule()
-        return [m for m in module if m.ist_frei()] if nur_freie else module
+        if nur_freie:
+            freie_module = []
+            for m in module:
+                if m.ist_frei():
+                    freie_module.append(m)
+            return freie_module
+        else:
+            return module
 
     def hole_verfuegbare_wp_bereiche(self) -> List[str]:
+        """Lädt die Wahlpflichtbereiche aus der DB, sonst die Standard-Bereiche."""
         bereiche = self.repository.hole_verfuegbare_wp_bereiche()
         if bereiche:
             return bereiche
@@ -57,28 +75,26 @@ class DashboardController:
         else:
             self.view.zeige_fehlermeldung(nachricht)
 
-
-    #Aktionen mit Geschäftslogik
+    # Aktionen
 
     def neues_semester_erstellen(self) -> None:
         """
         Orchestriert das Hinzufügen eines neuen Semesters und steuert die View.
         """
         try:
-            # 1. Aktuellen Stand laden
+            # Aktuellen Stand laden
             studiengang = self.repository.lade_studiengang()
 
-            # 2. Geschäftslogik an das Model delegieren
+            # Das neue Semester erstellt die Domäne
             neues_semester = studiengang.erstelle_neues_semester()
 
-            # 3. Persistieren
+            # Semester speichern
             semester_id = self.repository.speichere_semester(neues_semester)
             if not semester_id:
-                # Im Fehlerfall die View informieren
                 self.view.zeige_fehlermeldung("Fehler beim Speichern des Semesters.")
                 return
 
-            # 4. View über Erfolg informieren und zum Neuzeichnen anweisen
+            # Dashboard neu zeichnen und Erfolg melden
             self.view.lade_und_zeichne_dashboard()
             self.view.zeige_erfolgsmeldung(f"Semester {neues_semester.nummer} erfolgreich erstellt.")
 
@@ -119,7 +135,7 @@ class DashboardController:
 
             self.view.zeige_erfolgsmeldung(f"Modul '{modul.name}' erfolgreich gelöscht.")
 
-            # UI-Refresh-Logik
+            # Ansicht aktualisieren
             if callback:
                 callback()
             elif modul.semester_id:
@@ -165,7 +181,8 @@ class DashboardController:
         else:
             self.view.zeige_fehlermeldung("Fehler beim Zuweisen des Moduls.")
 
-    def speichere_modul(self, basis_daten: Dict[str, Any], pruef_daten: Optional[Dict[str, Any]], modul_id: Optional[int], callback: Optional[Callable] = None) -> None:
+    def speichere_modul(self, basis_daten: Dict[str, Any], pruef_daten: Optional[Dict[str, Any]],
+                        modul_id: Optional[int], callback: Optional[Callable] = None) -> None:
         """
         Speichert ein Modul und steuert die View.
         """
@@ -189,6 +206,7 @@ class DashboardController:
             loesche_pruefungsleistung = modul.soll_pruefungsleistung_loeschen()
         else:
             loesche_pruefungsleistung = False
+
         erfolg, nachricht = self.repository.bearbeite_modul_pruefungsleistung(
             basis_daten, pruef_daten, modul_id, loesche_pruefungsleistung=loesche_pruefungsleistung
         )
@@ -222,7 +240,7 @@ class DashboardController:
         """Führt den CSV-Export durch und informiert die View."""
         try:
             self.repository.csv_exporter.exportiere_daten_als_csv(dateipfad)
-            self.view.zeige_erfolgsmeldung("Backup wurde erfolgreich erstellt! 🎉")
+            self.view.zeige_erfolgsmeldung("Backup wurde erfolgreich erstellt!")
         except Exception as e:
             self.view.zeige_fehlermeldung(f"Export fehlgeschlagen: {e}")
 
@@ -230,7 +248,7 @@ class DashboardController:
         """Setzt die Datenbank auf Testdaten zurück und steuert die View."""
         try:
             self.repository.initialisiere_datenbank_neu(modus="test")
-            self._aktualisiere_kpis()  # KPI-Werte nach dem Laden neu berechnen und speichern
+            self._aktualisiere_kpis()
             self.view.lade_und_zeichne_dashboard()
             self.view.zeige_erfolgsmeldung("Testdaten wurden erfolgreich geladen!")
         except Exception as e:
@@ -240,29 +258,28 @@ class DashboardController:
         """Leert die Datenbank komplett und steuert die View."""
         try:
             self.repository.initialisiere_datenbank_neu(modus="leer")
-            self._aktualisiere_kpis()  # Sicherstellen, dass auch hier alles sauber ist
+            self._aktualisiere_kpis()
             self.view.lade_und_zeichne_dashboard()
             self.view.zeige_erfolgsmeldung("Datenbank wurde erfolgreich geleert!")
         except Exception as e:
             self.view.zeige_fehlermeldung(f"Vorgang fehlgeschlagen: {e}")
 
+    # Private Hilfsmethoden
 
-    #Private Hilfsmethode für Datenintegrität
     def _aktualisiere_kpis(self):
         """
-        Private Hilfsmethode für Datenintegrität.
-        Stellt sicher, dass KPIs nach Änderungen aktualisiert werden.
-        Diese Methode koordiniert die Berechnung (nutzt Models) und Persistierung (nutzt Repository).
+        Berechnet die KPIs nach jeder Änderung neu und speichert sie.
+        Die Berechnung übernehmen die Modelle, das Speichern das Repository.
         """
-        # 1. Studiengang laden
+        # Studiengang laden
         studiengang = self.repository.lade_studiengang()
 
-        # 2. Studiengang-KPIs neu berechnen (Domänenlogik im Model)
+        # Studiengang-KPIs neu berechnen
         studiengang.aktualisiere_kpis()
 
-        # 3. Semester-KPIs neu berechnen (Domänenlogik im Model)
+        # Semester-KPIs neu berechnen
         for semester in studiengang.semester_liste:
             semester.aktualisiere_kpis()
 
-        # 4. Zurückschreiben
+        # Ergebnisse in die DB zurückschreiben
         self.repository.aktualisiere_kpis(studiengang)
