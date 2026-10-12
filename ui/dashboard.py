@@ -6,7 +6,7 @@ from backend.models.constants import (
     FARBE_BESTANDEN, FARBE_AKTIV, FARBE_BLAU, FARBE_VIOLETT, FARBE_INDIGO,
     SCHRIFT_TITEL, SCHRIFT_H2, SCHRIFT_KPI_WERT, SCHRIFT_KPI_LABEL, SCHRIFT_NORMAL, SCHRIFT_KLEIN,
     STATUS_FARBEN, STATUS_GEPLANT,
-    ALLE_MODUL_STATUS, MOEGLICHE_PRUEFUNGSARTEN, MOEGLICHE_VERSUCHE,
+    ALLE_MODUL_STATUS, MOEGLICHE_PRUEFUNGSARTEN,
     STATUS_MIT_PRUEFUNGSLEISTUNG
 )
 from backend.models.modul import Modul, WahlpflichtModul
@@ -264,19 +264,17 @@ class StudienDashboard:
             bg = FARBE_BLAU
             fg = "white"
             status_fg = "white"
-            cursor = "hand2"
         else:
             status_text = "Nicht aktiv"
             bg = KARTE_HINTERGRUND
             fg = TEXT_DUNKEL
             status_fg = TEXT_HELL
-            cursor = "hand2"
 
         row_idx = index // 6
         col_idx = index % 6
 
         f = tk.Frame(eltern, bg=bg, highlightbackground=RAHMEN_FARBE if not semester.ist_aktiv else bg,
-                     highlightthickness=1, cursor=cursor)
+                     highlightthickness=1, cursor="hand2")
         f.grid(row=row_idx, column=col_idx, padx=5, pady=5, sticky="ewns")
 
         inner = tk.Frame(f, bg=bg, padx=10, pady=20)
