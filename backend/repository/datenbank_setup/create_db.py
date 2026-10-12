@@ -103,6 +103,9 @@ def initialisiere_datenbank(db_pfad: str, modus: str, backup_ordner: str = "data
             print(f"[FEHLER] Fehler beim Löschen der alten Datenbank: {e}")
             raise e
 
+    # Ordner für die Datenbank anlegen, falls er fehlt
+    os.makedirs(os.path.dirname(db_pfad), exist_ok=True)
+
     # Neue Datenbank anlegen (connect erstellt die leere Datei) und Schema erstellen
     conn = None
     try:
