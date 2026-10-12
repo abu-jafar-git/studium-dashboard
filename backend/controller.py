@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any, Tuple, List, Callable
+from typing import Optional, Dict, Any, List, Callable
 from backend.repository.repository import DBManager
 from backend.validators import StudiengangValidator, ModulValidator, PruefungsleistungValidator
 from backend.models.constants import WP_BEREICHE
@@ -138,7 +138,7 @@ class DashboardController:
             # Ansicht aktualisieren
             if callback:
                 callback()
-            elif modul.semester_id:
+            elif not modul.ist_frei():
                 self.view.zeige_semester_detail(modul.semester_id)
             else:
                 self.view.lade_und_zeichne_dashboard()
