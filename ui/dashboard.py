@@ -249,7 +249,7 @@ class StudienDashboard:
 
         # Wenn die Liste der Semester leer ist, zeige eine Meldung.
         if not self.studiengang.semester_liste:
-            tk.Label(raster_container, text="Keine Semester vorhanden. Bitte fügen Sie welche hinzu.",
+            tk.Label(raster_container, text="Keine Semester vorhanden. Bitte füge welche hinzu.",
                      font=SCHRIFT_H2, bg=KARTE_HINTERGRUND, fg=TEXT_HELL).pack(pady=20)
             return
 
