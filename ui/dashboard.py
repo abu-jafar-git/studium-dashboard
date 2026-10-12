@@ -11,10 +11,12 @@ from backend.models.constants import (
 )
 from backend.models.modul import Modul, WahlpflichtModul
 
+
 class ScrollableFrame(tk.Frame):
     """
     Eine wiederverwendbare Komponente für scrollbaren Inhalt.
     """
+
     def __init__(self, container, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
 
@@ -49,9 +51,11 @@ class ScrollableFrame(tk.Frame):
         self.canvas.bind("<Configure>", self._on_canvas_configure)
 
     def _on_canvas_configure(self, event):
+        """Passt die Breite des inneren Frames an die Breite des Canvas an."""
         self.canvas.itemconfig(self.window_id, width=event.width)
 
     def _mausrad_aktivieren(self, event=None):
+        """Aktiviert das Scrollen mit dem Mausrad für diesen Bereich."""
         self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
 
     def _mausrad_deaktivieren(self, event):
@@ -102,7 +106,7 @@ class StudienDashboard:
         self._initialisiere_styles()
         self.lade_und_zeichne_dashboard()
 
-    #Öffentliche Methoden für den Controller
+    # Öffentliche Methoden für den Controller
 
     def zeige_erfolgsmeldung(self, nachricht: str):
         """Zeigt eine standardisierte Erfolgsmeldung an."""
@@ -112,7 +116,7 @@ class StudienDashboard:
         """Zeigt eine standardisierte Fehlermeldung an."""
         messagebox.showerror("Fehler", nachricht)
 
-    # Rendering-Methoden
+    # Zeichnen
 
     def _initialisiere_styles(self):
         """
@@ -129,13 +133,13 @@ class StudienDashboard:
 
     def lade_und_zeichne_dashboard(self):
         """
-        Die zentrale "Refresh"-Methode für die Hauptansicht.
+        Zentrale Methode zum Aktualisieren der Hauptansicht.
         Lädt alle Daten neu und zeichnet das gesamte Dashboard.
         """
-        # 1. Daten über den Controller laden.
+        # Daten über den Controller laden
         self.studiengang = self.controller.lade_studiengang()
 
-        # 2. Alte UI-Elemente entfernen, um die Ansicht zu erneuern.
+        # Alte UI-Elemente entfernen
         for widget in self.root.winfo_children():
             widget.destroy()
 
@@ -143,7 +147,7 @@ class StudienDashboard:
         main_frame = tk.Frame(self.root, bg=HINTERGRUND_FARBE, padx=20, pady=20)
         main_frame.pack(fill="both", expand=True)
 
-        # 3. Die einzelnen UI-Sektionen werden der Reihe nach gezeichnet.
+        # Die einzelnen Bereiche der Reihe nach zeichnen
         self._zeichne_header(main_frame)
         self._zeichne_kpi_karten(main_frame)
         self._zeichne_semester_uebersicht(main_frame)
@@ -155,7 +159,7 @@ class StudienDashboard:
         header_frame = tk.Frame(parent, bg=HINTERGRUND_FARBE)
         header_frame.pack(fill="x", pady=(0, 20))
 
-        # Der Titel kann sich jetzt immer auf self.studiengang.name verlassen.
+        # Titel
         tk.Label(header_frame, text=self.studiengang.name, font=SCHRIFT_TITEL,
                  bg=HINTERGRUND_FARBE, fg=TEXT_DUNKEL).pack(side="left")
 
@@ -163,7 +167,7 @@ class StudienDashboard:
         btn_container = tk.Frame(header_frame, bg=HINTERGRUND_FARBE)
         btn_container.pack(side="right")
 
-        # Buttons mit angepasstem Design und Reihenfolge
+        # Aktions-Buttons
         tk.Button(btn_container, text="🗑 DB Leeren", bg="#ef4444", fg="white", font=SCHRIFT_KLEIN, padx=10,
                   command=self.oeffne_db_leeren_dialog).pack(side="left", padx=5)
 
@@ -181,7 +185,7 @@ class StudienDashboard:
 
     def _zeichne_kpi_karten(self, parent: tk.Frame):
         """
-        Zeichnet die vier KPI-Karten. Kann sich darauf verlassen, dass self.studiengang existiert.
+        Zeichnet die vier KPI-Karten.
         """
         kpi_frame = tk.Frame(parent, bg=HINTERGRUND_FARBE)
         kpi_frame.pack(fill="x", pady=(0, 20))
@@ -254,15 +258,15 @@ class StudienDashboard:
             self._zeichne_semester_kachel(raster_container, i, semester)
 
     def _zeichne_semester_kachel(self, eltern, index, semester):
-        """Erstellt eine Kachel für ein Semester im alten Design."""
-        status_text = "Aktiv" if semester.ist_aktiv else "Nicht aktiv"
-
+        """Erstellt eine Kachel für ein Semester."""
         if semester.ist_aktiv:
+            status_text = "Aktiv"
             bg = FARBE_BLAU
             fg = "white"
             status_fg = "white"
             cursor = "hand2"
         else:
+            status_text = "Nicht aktiv"
             bg = KARTE_HINTERGRUND
             fg = TEXT_DUNKEL
             status_fg = TEXT_HELL
@@ -289,7 +293,7 @@ class StudienDashboard:
             w.bind("<Button-1>", lambda e, s_id=semester.id: self.zeige_semester_detail(s_id))
 
     def _zeichne_modul_karte(self, parent, row, col, modul: Modul):
-        """Zeichnet eine einzelne Modul-Karte im alten Design."""
+        """Zeichnet eine einzelne Modul-Karte."""
         farbe = STATUS_FARBEN.get(modul.status, RAHMEN_FARBE)
 
         frame = tk.Frame(parent, bg=KARTE_HINTERGRUND, highlightbackground=farbe,
@@ -301,7 +305,7 @@ class StudienDashboard:
         inner = tk.Frame(frame, bg=KARTE_HINTERGRUND, padx=15, pady=12)
         inner.pack(fill="both", expand=True)
 
-        # --- OBEN: Status & Kennung ---
+        # Oben: Status und Kennung
         header = tk.Frame(inner, bg=KARTE_HINTERGRUND, height=25)
         header.pack(fill="x")
         header.pack_propagate(False)
@@ -317,7 +321,7 @@ class StudienDashboard:
             tk.Label(header, text=modul.code, font=("Helvetica", 7),
                      fg=TEXT_HELL, bg=KARTE_HINTERGRUND).pack(side="right", padx=5)
 
-        # --- MITTE: Name & Prüfung ---
+        # Mitte: Name und Prüfungsart
         title_area = tk.Frame(inner, bg=KARTE_HINTERGRUND, height=60)
         title_area.pack(fill="x", pady=5)
         title_area.pack_propagate(False)
@@ -328,7 +332,7 @@ class StudienDashboard:
         art = modul.hole_pruefungsart()
         tk.Label(inner, text=art, font=("Helvetica", 8), fg=TEXT_HELL, bg=KARTE_HINTERGRUND).pack(anchor="w")
 
-        # --- UNTEN: Werte (ECTS/Note) ---
+        # Unten: ECTS und Note
         footer = tk.Frame(inner, bg=KARTE_HINTERGRUND)
         footer.pack(fill="x", pady=(5, 5))
 
@@ -342,14 +346,17 @@ class StudienDashboard:
         note_f.pack(side="right")
 
         note_val = modul.hole_note()
-        note_text = str(note_val) if note_val is not None else "-"
+        if note_val is not None:
+            note_text = str(note_val)
+        else:
+            note_text = "-"
 
         tk.Label(note_f, text="NOTE", font=("Helvetica", 7, "bold"), fg=TEXT_HELL, bg=KARTE_HINTERGRUND).pack(
             anchor="e")
         tk.Label(note_f, text=note_text, font=("Helvetica", 14, "bold"), fg=TEXT_DUNKEL, bg=KARTE_HINTERGRUND).pack(
             anchor="e")
 
-        # --- GANZ UNTEN: Die Button-Leiste ---
+        # Ganz unten: Button-Leiste
         btn_container = tk.Frame(inner, bg=KARTE_HINTERGRUND)
         btn_container.pack(side="bottom", fill="x", pady=(5, 0))
 
@@ -376,27 +383,25 @@ class StudienDashboard:
                   relief="flat", command=lambda m=modul: self.loesche_modul_click(m)).pack(side="left", expand=True,
                                                                                            fill="x", padx=1)
 
-
-
-    #Navigation
+    # Navigation
 
     def zeige_semester_detail(self, semester_id):
         """
         Zeigt die Detailansicht eines Semesters mit allen Modulen.
         """
-        # 1. Semester-Objekt laden (inkl. Module)
+        # Semester-Objekt laden (inkl. Module)
         semester = self.controller.lade_semester(semester_id)
         if not semester:
             return
 
-        # 3. UI leeren
+        # Alte UI-Elemente entfernen
         for widget in self.root.winfo_children():
             widget.destroy()
 
         main_frame = tk.Frame(self.root, bg=HINTERGRUND_FARBE, padx=20, pady=20)
         main_frame.pack(fill="both", expand=True)
 
-        # --- Header ---
+        # Header
         header_frame = tk.Frame(main_frame, bg=HINTERGRUND_FARBE)
         header_frame.pack(fill="x", pady=(0, 20))
 
@@ -415,11 +420,11 @@ class StudienDashboard:
                       command=lambda: self.controller.setze_aktives_semester(semester_id),
                       bg=FARBE_BESTANDEN, fg="white", font=SCHRIFT_KLEIN, padx=10).pack(side="right", padx=(0, 10))
 
-        # --- Scrollbarer Bereich für Module ---
+        # Scrollbarer Bereich für Module
         scroll_area = ScrollableFrame(main_frame, bg=HINTERGRUND_FARBE)
         scroll_area.pack(fill="both", expand=True)
 
-        # --- Module Grid ---
+        # Raster für die Modulkarten
         mod_frame = tk.Frame(scroll_area.scrollable_frame, bg=HINTERGRUND_FARBE)
         mod_frame.pack(fill="both", expand=True)
 
@@ -453,20 +458,26 @@ class StudienDashboard:
             c.pack(side="left", padx=(0, 5))
             tk.Label(f, text=text, font=SCHRIFT_KLEIN, fg=TEXT_DUNKEL, bg=HINTERGRUND_FARBE).pack(side="left")
 
-        # --- KPI Container (Semester-Statistiken) ---
+        # KPI-Karten des Semesters
         kpi_frame = tk.Frame(scroll_area.scrollable_frame, bg=HINTERGRUND_FARBE)
-        kpi_frame.pack(fill="x", pady=(20, 0), before=mod_frame) # Vor den Modulen anzeigen
+        kpi_frame.pack(fill="x", pady=(20, 0), before=mod_frame)  # Vor den Modulen anzeigen
         kpi_frame.grid_columnconfigure(0, weight=1)
         kpi_frame.grid_columnconfigure(1, weight=1)
 
         # Notenschnitt (aus DB)
         schnitt = semester.notenschnitt_semester
-        wert_schnitt = f"{schnitt:.2f}" if schnitt and schnitt > 0 else "-"
+        if schnitt and schnitt > 0:
+            wert_schnitt = f"{schnitt:.2f}"
+        else:
+            wert_schnitt = "-"
         self._zeichne_eine_kpi_karte(kpi_frame, 0, "SCHNITT SEMESTER", wert_schnitt, "", FARBE_AKTIV)
 
         # ECTS (aus DB)
         ects = semester.aktuelle_ects_semester
-        wert_ects = str(ects) if ects else "0"
+        if ects:
+            wert_ects = str(ects)
+        else:
+            wert_ects = "0"
         gesamt_ects = semester.gesamt_ects_semester
         self._zeichne_eine_kpi_karte(kpi_frame, 1, "ECTS SEMESTER", wert_ects, f"/ {gesamt_ects} ECTS", FARBE_BLAU)
 
