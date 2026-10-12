@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 from datetime import datetime
-from backend.models.constants import MOEGLICHE_VERSUCHE
+from backend.querschnitt.constants import MOEGLICHE_VERSUCHE
 
 
 class StudiengangValidator:

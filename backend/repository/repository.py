@@ -7,7 +7,7 @@ from backend.models.studiengang import Studiengang
 from backend.models.semester import Semester
 from backend.models.modul import Modul, WahlpflichtModul
 from backend.models.pruefungsleistung import Pruefungsleistung
-from database.create_db import initialisiere_datenbank
+from backend.repository.datenbank_setup.create_db import initialisiere_datenbank
 
 
 class DatabaseConnection:

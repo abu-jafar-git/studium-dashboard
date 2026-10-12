@@ -1,6 +1,6 @@
 from typing import List, Optional
 from backend.models.modul import Modul
-from backend.models.constants import STATUS_BESTANDEN, STATUS_MIT_PRUEFUNGSLEISTUNG
+from backend.querschnitt.constants import STATUS_BESTANDEN, STATUS_MIT_PRUEFUNGSLEISTUNG
 
 
 class Semester:

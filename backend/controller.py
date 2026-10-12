@@ -1,7 +1,7 @@
 from typing import Optional, Dict, Any, List, Callable
 from backend.repository.repository import DBManager
-from backend.validators import StudiengangValidator, ModulValidator, PruefungsleistungValidator
-from backend.models.constants import WP_BEREICHE
+from backend.querschnitt.validators import StudiengangValidator, ModulValidator, PruefungsleistungValidator
+from backend.querschnitt.constants import WP_BEREICHE
 
 
 class DashboardController:

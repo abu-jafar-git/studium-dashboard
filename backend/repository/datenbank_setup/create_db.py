@@ -2,8 +2,8 @@ import sqlite3
 import os
 import shutil
 from datetime import datetime
-from backend.repository.db_seeder_leere import fuelle_datenbank as fuelle_leere_db
-from backend.repository.db_seeder_test_daten import fuelle_datenbank as fuelle_test_db
+from backend.repository.datenbank_setup.db_seeder_leere import fuelle_datenbank as fuelle_leere_db
+from backend.repository.datenbank_setup.db_seeder_test_daten import fuelle_datenbank as fuelle_test_db
 
 
 def erstelle_schema(cursor: sqlite3.Cursor):

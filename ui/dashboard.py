@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from backend.controller import DashboardController
-from backend.models.constants import (
+from backend.querschnitt.constants import (
     HINTERGRUND_FARBE, KARTE_HINTERGRUND, TEXT_DUNKEL, TEXT_HELL, RAHMEN_FARBE,
     FARBE_BESTANDEN, FARBE_AKTIV, FARBE_BLAU, FARBE_VIOLETT, FARBE_INDIGO,
     SCHRIFT_TITEL, SCHRIFT_H2, SCHRIFT_KPI_WERT, SCHRIFT_KPI_LABEL, SCHRIFT_NORMAL, SCHRIFT_KLEIN,

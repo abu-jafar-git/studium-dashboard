@@ -1,7 +1,7 @@
 from datetime import date
 from typing import List, Optional
 from backend.models.semester import Semester
-from backend.models.constants import STATUS_MIT_PRUEFUNGSLEISTUNG
+from backend.querschnitt.constants import STATUS_MIT_PRUEFUNGSLEISTUNG
 
 
 class Studiengang:

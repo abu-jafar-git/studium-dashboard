@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import date
 from backend.models.pruefungsleistung import Pruefungsleistung
-from backend.models.constants import STATUS_BESTANDEN, STATUS_MIT_PRUEFUNGSLEISTUNG
+from backend.querschnitt.constants import STATUS_BESTANDEN, STATUS_MIT_PRUEFUNGSLEISTUNG
 
 
 class Modul:
