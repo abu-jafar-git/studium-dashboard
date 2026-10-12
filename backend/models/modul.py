@@ -20,9 +20,10 @@ class Modul:
         :param name: Der Name des Moduls (einziges Pflichtfeld).
         :param id: Die eindeutige ID aus der Datenbank.
         :param semester_id: Die ID des zugehörigen Semesters (wenn es zugeordnet ist).
-        :param code: Der eindeutige Modul-Code (z.B. "CS101").
+        :param code: Der Modul-Code (z.B. "CS101").
         :param ects: Die Anzahl der ECTS-Punkte für dieses Modul.
         :param status: Der aktuelle Status (z.B. "Geplant", "Bestanden").
+        :param semester_nummer: Die Nummer des zugehörigen Semesters (wenn es zugeordnet ist).
         """
         self.name = name
         self.id = id
@@ -71,12 +72,12 @@ class Modul:
         """
         return self.status not in STATUS_MIT_PRUEFUNGSLEISTUNG
 
-    #Getter-Methoden für gekapselte Daten der Prüfungsleistung
+    # Getter-Methoden für die Daten der Prüfungsleistung
 
     def hole_leistung(self) -> Optional[Pruefungsleistung]:
         """
         Gibt das gesamte verknüpfte Prüfungsleistungs-Objekt zurück.
-        Dies dient als "Generalschlüssel", falls alle Details auf einmal benötigt werden.
+        Wird genutzt, wenn alle Details auf einmal benötigt werden.
 
         :return: Das Prüfungsleistungs-Objekt oder None.
         """
@@ -88,7 +89,10 @@ class Modul:
 
         :return: Die erreichten Punkte als float oder None.
         """
-        return self.pruefungsleistung.punkte if self.pruefungsleistung else None
+        if self.pruefungsleistung:
+            return self.pruefungsleistung.punkte
+        else:
+            return None
 
     def hole_note(self) -> Optional[float]:
         """
@@ -96,7 +100,10 @@ class Modul:
 
         :return: Die Note als float oder None.
         """
-        return self.pruefungsleistung.note if self.pruefungsleistung else None
+        if self.pruefungsleistung:
+            return self.pruefungsleistung.note
+        else:
+            return None
 
     def hole_datum(self) -> Optional[date]:
         """
@@ -104,7 +111,10 @@ class Modul:
 
         :return: Das Prüfungsdatum als date-Objekt oder None.
         """
-        return self.pruefungsleistung.datum if self.pruefungsleistung else None
+        if self.pruefungsleistung:
+            return self.pruefungsleistung.datum
+        else:
+            return None
 
     def hole_versuch(self) -> Optional[int]:
         """
@@ -112,15 +122,21 @@ class Modul:
 
         :return: Die Versuchsnummer als int oder None.
         """
-        return self.pruefungsleistung.versuch if self.pruefungsleistung else None
+        if self.pruefungsleistung:
+            return self.pruefungsleistung.versuch
+        else:
+            return None
 
     def hole_pruefungsart(self) -> Optional[str]:
         """
         Gibt die Prüfungsart der verknüpften Prüfungsleistung sicher zurück.
 
-        :return: Die Prüfungsart als string oder None.
+        :return: Die Prüfungsart als String oder None.
         """
-        return self.pruefungsleistung.pruefungsart if self.pruefungsleistung else None
+        if self.pruefungsleistung:
+            return self.pruefungsleistung.pruefungsart
+        else:
+            return None
 
 
 class WahlpflichtModul(Modul):
