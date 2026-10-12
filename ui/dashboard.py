@@ -528,11 +528,13 @@ class StudienDashboard:
             tk.Button(row, text="Bearbeiten", font=SCHRIFT_KLEIN, bg=FARBE_BLAU, fg="white",
                       command=lambda m=mod: self.oeffne_modul_editor(m,
                                                                      callback_nach_speichern=lambda: [win.destroy(),
+                                                                                                      self.lade_und_zeichne_dashboard(),
                                                                                                       self.zeige_pflichtmodule_verwaltung()])).pack(
                 side="right")
 
             tk.Button(row, text="🗑", font=SCHRIFT_KLEIN, bg="#fee2e2", fg="#ef4444",
                       command=lambda m=mod: self.loesche_modul_click(m, callback=lambda: [win.destroy(),
+                                                                                          self.lade_und_zeichne_dashboard(),
                                                                                           self.zeige_pflichtmodule_verwaltung()])).pack(
                 side="right", padx=5)
 
@@ -619,10 +621,11 @@ class StudienDashboard:
 
                 tk.Button(row, text="Bearbeiten", font=SCHRIFT_KLEIN, bg=FARBE_VIOLETT, fg="white",
                           command=lambda m=mod: self.oeffne_modul_editor(m, callback_nach_speichern=lambda: [
-                              win.destroy(), self.zeige_wp_verwaltung()])).pack(side="right")
+                              win.destroy(), self.lade_und_zeichne_dashboard(), self.zeige_wp_verwaltung()])).pack(side="right")
 
                 tk.Button(row, text="🗑", font=SCHRIFT_KLEIN, bg="#fee2e2", fg="#ef4444",
                           command=lambda m=mod: self.loesche_modul_click(m, callback=lambda: [win.destroy(),
+                                                                                              self.lade_und_zeichne_dashboard(),
                                                                                               self.zeige_wp_verwaltung()])).pack(
                     side="right", padx=5)
 
@@ -819,7 +822,7 @@ class StudienDashboard:
                     val_punkte = modul.hole_punkte()
                 else:
                     val_punkte = ""
-                if val_punkte:
+                if val_punkte is not None:
                     e_punkte.insert(0, str(val_punkte))
                 e_punkte.pack(side="left", padx=5)
                 widgets_pruefung['punkte'] = e_punkte
