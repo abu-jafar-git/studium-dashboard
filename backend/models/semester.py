@@ -10,7 +10,7 @@ class Semester:
     """
 
     def __init__(self, nummer: int, id: Optional[int] = None, studiengang_id: Optional[int] = None,
-                 ist_aktiv: bool = False, notenschnitt_semester: Optional[float] = None,
+                 ist_aktiv: bool = False, notenschnitt_semester: Optional[float] = 0.0,
                  aktuelle_ects_semester: Optional[int] = 0, gesamt_ects_semester: Optional[int] = 0):
         """
         Initialisiert ein neues Semester-Objekt.

@@ -95,6 +95,7 @@ class DashboardController:
                 return
 
             # Dashboard neu zeichnen und Erfolg melden
+            self._aktualisiere_kpis()
             self.view.lade_und_zeichne_dashboard()
             self.view.zeige_erfolgsmeldung(f"Semester {neues_semester.nummer} erfolgreich erstellt.")
 

@@ -25,7 +25,7 @@ def erstelle_schema(cursor: sqlite3.Cursor):
           `aktuelle_ects` INTEGER DEFAULT 0,
           `ziel_abschlussdauer` INTEGER DEFAULT NULL,
           `aktuelle_zeit_in_monat` INTEGER DEFAULT NULL,
-          `gesamte_module` INTEGER DEFAULT NULL,
+          `gesamte_module` INTEGER DEFAULT 0,
           `abgeschlossene_module` INTEGER DEFAULT 0
         );
 
@@ -34,7 +34,7 @@ def erstelle_schema(cursor: sqlite3.Cursor):
           `studiengang_id` INTEGER,
           `nummer` INTEGER NOT NULL,
           `status` TEXT DEFAULT 'Nicht aktiv',
-          `notenschnitt_semester` REAL DEFAULT NULL,
+          `notenschnitt_semester` REAL DEFAULT 0,
           `aktuelle_ects_semester` INTEGER DEFAULT 0,
           `gesamt_ects_semester` INTEGER DEFAULT 0,
           FOREIGN KEY (`studiengang_id`) REFERENCES `studiengang` (`id`) ON DELETE CASCADE
