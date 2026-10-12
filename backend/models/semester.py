@@ -6,8 +6,7 @@ from backend.models.constants import STATUS_BESTANDEN, STATUS_MIT_PRUEFUNGSLEIST
 class Semester:
     """
     Repräsentiert ein Semester innerhalb eines Studiengangs.
-    Diese Klasse ist ein Daten-Container für die in der Datenbank gespeicherten
-    Werte und enthält die Liste der zugehörigen Module.
+    Hält die zugehörigen Module und berechnet die Semester-KPIs.
     """
 
     def __init__(self, nummer: int, id: Optional[int] = None, studiengang_id: Optional[int] = None,
@@ -54,24 +53,27 @@ class Semester:
         anzahl_noten = 0
 
         for modul in self.module:
-            # 1. Status prüfen
             if modul.status in STATUS_MIT_PRUEFUNGSLEISTUNG:
-                # 2. Note holen (aus dem verknüpften Objekt)
+                # Note aus der Prüfungsleistung holen
                 note = modul.hole_note()
 
-                # 3. Wenn Note vorhanden, addieren
+                # Nur vorhandene Noten zählen
                 if note is not None:
                     summe_noten += note
                     anzahl_noten += 1
 
-        return summe_noten / anzahl_noten if anzahl_noten > 0 else 0.0
+        if anzahl_noten > 0:
+            return summe_noten / anzahl_noten
+        else:
+            return 0.0
 
     def berechne_semester_ects(self) -> int:
         """
         Summiert die ECTS-Punkte.
-        Berücksichtigt NUR Module mit Status 'Bestanden'.
+        Berücksichtigt nur Module mit Status 'Bestanden'.
         """
         summe_ects = 0
+
         for modul in self.module:
             if modul.status == STATUS_BESTANDEN:
                 summe_ects += modul.ects
@@ -81,4 +83,9 @@ class Semester:
         """
         Summiert die ECTS-Punkte aller Module im Semester, unabhängig vom Status.
         """
-        return sum(modul.ects for modul in self.module if modul.ects)
+        summe_ects = 0
+
+        for modul in self.module:
+            if modul.ects:
+                summe_ects += modul.ects
+        return summe_ects
