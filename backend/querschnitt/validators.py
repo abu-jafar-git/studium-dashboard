@@ -1,6 +1,6 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from datetime import datetime
-from backend.querschnitt.constants import MOEGLICHE_VERSUCHE
+from backend.querschnitt.constants import MOEGLICHE_VERSUCHE, STATUS_BESTANDEN, STATUS_NICHT_BESTANDEN
 
 
 class StudiengangValidator:
@@ -100,12 +100,14 @@ class PruefungsleistungValidator:
     """
 
     @staticmethod
-    def validiere(daten: Dict[str, Any]) -> tuple[bool, List[str]]:
+    def validiere(daten: Dict[str, Any], status: Optional[str] = None) -> tuple[bool, List[str]]:
         """
         Validiert Prüfungsleistungs-Daten.
         Note, Prüfungsart und Versuch sind Pflichtfelder.
+        Die Note muss zum Status passen (Bestanden bis 4.0, Nicht bestanden über 4.0).
 
         :param daten: Dictionary mit Prüfungsleistungs-Daten
+        :param status: Der Status des Moduls
         :return: (ist_gueltig: bool, fehler: List[str])
         """
         fehler = []
@@ -119,6 +121,10 @@ class PruefungsleistungValidator:
                 note = float(note_str)
                 if not (1.0 <= note <= 6.0):
                     fehler.append("- Note muss zwischen 1.0 und 6.0 liegen.")
+                elif status == STATUS_BESTANDEN and note > 4.0:
+                    fehler.append("- Ein bestandenes Modul braucht eine Note von höchstens 4.0.")
+                elif status == STATUS_NICHT_BESTANDEN and note <= 4.0:
+                    fehler.append("- Ein nicht bestandenes Modul braucht eine Note über 4.0.")
             except ValueError:
                 fehler.append("- Note muss eine Zahl sein.")
 

@@ -193,7 +193,7 @@ class Controller:
             fehler.extend(modul_fehler)
 
         if pruef_daten:
-            pruef_gueltig, pruef_fehler = PruefungsleistungValidator.validiere(pruef_daten)
+            pruef_gueltig, pruef_fehler = PruefungsleistungValidator.validiere(pruef_daten, basis_daten.get('status'))
             if not pruef_gueltig:
                 fehler.extend(pruef_fehler)
 
