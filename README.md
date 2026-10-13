@@ -18,7 +18,7 @@ Getestet unter Windows 11.
 ## Installation und Start
 
 1. Auf dieser Seite auf **Code → Download ZIP** klicken und die ZIP-Datei entpacken
-   (oder `git clone https://github.com/abu-jafar-git/studium-dashboard.git`).
+   (oder `git clone https://github.com/sari-zakzak/studium-dashboard.git`).
 2. Im Projektordner (dort, wo `main.py` liegt) die Eingabeaufforderung öffnen,
    z. B. `cmd` in die Adressleiste des Explorers eingeben.
 3. Programm starten:
